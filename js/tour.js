@@ -609,122 +609,207 @@ function showSignUpButton() {
 
 window.initSignupForm = function() {
 
-// Section 7.1: Modal Display Function
-// ===================================
-function displayEmailUsernameModals(emailTaken, usernameTaken) {
-    const emailTakenModal = $('#emailTakenModal'); // jQuery selector for email modal element
-    const usernameTakenModal = $('#usernameTakenModal'); // jQuery selector for username modal element
+  // ---- 7.1: Helper Functions ----
 
-    let showEmailModal = emailTaken;
-    let showUsernameModal = usernameTaken;
+  function isValidEmail(val) {
+    return /^\S+@\S+\.\S+$/.test(val);
+  }
+  function isValidPhone(val) {
+    return val.replace(/\D/g, '').length >= 3;
+  }
+  function cleanPhoneVal(val) {
+    return val ? val.replace(/\D/g, '') : '';
+  }
 
-    // Check if either email or username is taken
-    if (showEmailModal || showUsernameModal) {
-        // If an email or username is taken, apply the overlay and blur
-        showModalOverlayAndBlur();
+  // ---- 7.2: Stacked Modal Overlay, Renderer & Positioning ----
 
-        // Determine which specific modals to show based on validation results
-        if (showEmailModal && showUsernameModal) {
-            // Both email and username are taken, show both modals
-            // Use Bootstrap's modal('show') method
-            emailTakenModal.modal('show');
-            usernameTakenModal.modal('show');
-        } else if (showEmailModal) {
-            // Only email is taken, show the email modal
-            emailTakenModal.modal('show');
-        } else if (showUsernameModal) {
-            // Only username is taken, show the username modal
-            usernameTakenModal.modal('show');
-        }
-    } else {
-        // If neither email nor username is taken, ensure all modals are hidden
-        // and remove the overlay and blur effects.
-        hideModalOverlayAndBlur(); // Remove overlay and blur
-        emailTakenModal.modal('hide'); // Ensure email modal is hidden
-        usernameTakenModal.modal('hide'); // Ensure username modal is hidden
+  function ensureErrorOverlay() {
+    let overlay = document.getElementById('modal-error-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'modal-error-overlay';
+      document.body.appendChild(overlay);
     }
-}
+    overlay.style.display = 'flex';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.background = 'rgba(216,44,44,0.35)';
+    overlay.style.backdropFilter = 'blur(3px)';
+    overlay.style.zIndex = '9998';
+    overlay.style.opacity = '1';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.pointerEvents = 'all';
+  }
+  function removeErrorOverlay() {
+    let overlay = document.getElementById('modal-error-overlay');
+    if (overlay) {
+      overlay.style.display = 'none';
+      overlay.style.opacity = '0';
+    }
+  }
 
-// Section 7.2: Modal Event Listeners for Overlay Hiding
-// ======================================================
-$(document).ready(function() {
-    // Listener for when the email taken modal is fully hidden
-    $('#emailTakenModal').on('hidden.bs.modal', function () {
-        // Check if the username modal is currently visible.
-        // If it's NOT visible, then hide the overlay and blur.
-        // This ensures the overlay remains if the other modal is still open.
-        if (!$('#usernameTakenModal').is(':visible')) {
-            hideModalOverlayAndBlur();
-        }
+  function stackErrorModals(initial = true) {
+    const emailModal = document.getElementById('globalErrorModal-email');
+    const usernameModal = document.getElementById('globalErrorModal-username');
+    const GAP = 20;
+    const vh = window.innerHeight;
+    const fallbackHeight = 180;
+
+    function setModal(modal, topPx, z) {
+      if (!modal) return;
+      modal.style.left = "50%";
+      modal.style.top = topPx + "px";
+      modal.style.transform = "translateX(-50%)";
+      modal.style.zIndex = z;
+      modal.style.display = "flex";
+    }
+
+    [emailModal, usernameModal].forEach(m => {
+      if (m) m.style.transition = initial ? 'none' : 'top 0.7s cubic-bezier(.7,0,.23,1)';
     });
 
-    // Listener for when the username taken modal is fully hidden
-    $('#usernameTakenModal').on('hidden.bs.modal', function () {
-        // Check if the email modal is currently visible.
-        // If it's NOT visible, then hide the overlay and blur.
-        if (!$('#emailTakenModal').is(':visible')) {
-            hideModalOverlayAndBlur();
-        }
+    if (emailModal && usernameModal) {
+      const mh1 = emailModal.offsetHeight || fallbackHeight;
+      const mh2 = usernameModal.offsetHeight || fallbackHeight;
+      const total = mh1 + GAP + mh2;
+      const topStart = Math.round((vh - total) / 2);
+
+      setModal(emailModal, topStart, 10011);
+      setModal(usernameModal, topStart + mh1 + GAP, 10010);
+    } else if (emailModal) {
+      const mh = emailModal.offsetHeight || fallbackHeight;
+      const topCenter = Math.round((vh - mh) / 2);
+      setModal(emailModal, topCenter, 10010);
+    } else if (usernameModal) {
+      const mh = usernameModal.offsetHeight || fallbackHeight;
+      const topCenter = Math.round((vh - mh) / 2);
+      setModal(usernameModal, topCenter, 10010);
+    }
+
+    if (initial) {
+      setTimeout(() => {
+        [emailModal, usernameModal].forEach(m => {
+          if (m) m.style.transition = 'top 0.7s cubic-bezier(.7,0,.23,1)';
+        });
+      }, 35);
+    }
+  }
+
+  function showErrorModal(opts = {}) {
+    // opts.type: "email" | "username" | "default"
+    const {
+      type = "default",
+      title = "Whoops!",
+      messages = [],
+      suggestions = null,
+      onAcceptSuggestion = null,
+      onClose = null,
+      lockOverlay = true   // overlays should never close on background click!
+    } = opts;
+
+    ensureErrorOverlay();
+
+    // Modal ID per type
+    const modalId = type === "email" ? "globalErrorModal-email"
+                  : type === "username" ? "globalErrorModal-username"
+                  : "globalErrorModal";
+    const oldModal = document.getElementById(modalId);
+    if (oldModal) oldModal.remove();
+
+    // Always remove both other modals if this is a "default"
+    if (type === "default") {
+      ["globalErrorModal-email", "globalErrorModal-username"].forEach(id => {
+        const other = document.getElementById(id);
+        if (other) other.remove();
+      });
+    }
+
+    const modal = document.createElement('div');
+    modal.id = modalId;
+    modal.className = 'modal-modal active stacked-error-modal ' + (type ? `modal-${type}` : '');
+
+    let suggestionHtml = '';
+    if (type === "username" && Array.isArray(suggestions) && suggestions.length) {
+      suggestionHtml = `
+        <form id="usernameSuggestionForm">
+          ${suggestions.map((s, i) => `
+            <label style="display:flex;align-items:center;margin-bottom:7px;">
+              <input type="radio" name="usernameSuggestion" value="${s}" ${i === 0 ? "checked" : ""}>
+              <span>${s}</span>
+            </label>
+          `).join("")}
+        </form>
+        <button id="acceptUsernameBtn" class="btn" type="button" style="margin-top:12px;">Accept Username</button>
+      `;
+    }
+
+    modal.innerHTML = `
+      <div class="modal-content" style="background: white; padding: 24px 32px 32px 32px; border-radius: 14px; min-width:340px; max-width: 430px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); position:relative;">
+        <button id="closeGlobalError" class="modal-close" aria-label="Close" style="position:absolute;top:16px;right:16px;font-size:1.5rem;">&times;</button>
+        <div class="modal-title" style="font-size:1.3rem;font-weight:600;margin-bottom:12px;">${title}</div>
+        <ul id="globalErrorList" style="margin:0 0 18px 0; padding-left:20px;">
+          ${messages.map(msg => `<li style="color:#b12; margin-bottom:8px;">${msg}</li>`).join('')}
+        </ul>
+        ${suggestionHtml}
+      </div>
+    `;
+
+    // --- No transition on open; enable after 1 frame ---
+    modal.style.transition = "none";
+    document.body.appendChild(modal);
+    stackErrorModals(true);
+
+    // Center modal ALWAYS if default type
+    if (type === "default") {
+      modal.style.left = "50%";
+      modal.style.top = "50%";
+      modal.style.transform = "translate(-50%, -50%)";
+      modal.style.zIndex = "10010";
+      modal.style.display = "flex";
+    }
+
+    requestAnimationFrame(() => {
+      modal.style.transition = "top 0.7s cubic-bezier(.7,0,.23,1)";
     });
-});
 
-// Section 7.3: Email/Username Input Event Listeners
-// ===============================================
-$(document).ready(function() {
-    // Listener for email input field: Handles auto-population and validation checks
-    $('#email').on('blur keyup', function() { // Use blur and keyup for immediate feedback and final check
-        const emailInput = $(this);
-        const usernameInput = $('#username');
-        const emailValue = emailInput.val().trim();
-
-        // 7.3.1: Auto-populate Username if empty and email is valid enough
-        if (emailValue.length > 0 && usernameInput.val().trim() === '') {
-            // Simple logic to create a username from email (before '@' symbol)
-            const usernameSuggestion = emailValue.split('@')[0];
-            if (usernameSuggestion) {
-                usernameInput.val(usernameSuggestion);
-            }
+    // Close via X or suggestion
+    function finishClose(accepted) {
+      modal.remove();
+      if (typeof onClose === "function") onClose(accepted);
+      setTimeout(() => {
+        stackErrorModals(false);
+        if (!document.getElementById('globalErrorModal-email') && !document.getElementById('globalErrorModal-username')) {
+          removeErrorOverlay();
         }
-
-        // 7.3.2: Trigger Email and Username validation checks
-        if (emailValue.length > 0) { // Only check if email has content
-            // Assuming checkIfEmailTaken and checkIfUsernameTaken are defined elsewhere and manage Firestore checks
-            // These functions should eventually call displayEmailUsernameModals based on their results.
-            checkIfEmailTaken(emailValue);
-        } else {
-            // If email is empty, ensure modals are hidden
-            displayEmailUsernameModals(false, false);
-            // Also clear username if it was auto-populated from an empty email
-            if (usernameInput.data('autoPopulated')) { // Using a data attribute to track auto-population
-                usernameInput.val('');
-                usernameInput.removeData('autoPopulated');
-            }
-        }
-
-        // Check username validity as well, especially if it was auto-populated or user changed it
-        const usernameValue = usernameInput.val().trim();
-        if (usernameValue.length > 0) {
-            checkIfUsernameTaken(usernameValue);
-        } else {
-            // If username is empty, ensure username modal is hidden
-            displayEmailUsernameModals(false, false); // This might be redundant if already called for email
-        }
+      }, 10);
+    }
+    modal.querySelector('#closeGlobalError').onclick = function() {
+      finishClose(false);
+    };
+    modal.addEventListener('keydown', function(e) {
+      if (e.key === "Escape") finishClose(false);
     });
-
-    // Listener for username input field: Only checks username validity on its own
-    $('#username').on('blur keyup', function() {
-        const usernameInput = $(this);
-        const usernameValue = usernameInput.val().trim();
-
-        if (usernameValue.length > 0) { // Only check if username has content
-            checkIfUsernameTaken(usernameValue);
-        } else {
-            // If username is empty, ensure username modal is hidden
-            displayEmailUsernameModals(false, false);
+    if (!lockOverlay) {
+      modal.addEventListener('mousedown', function(e) {
+        if (e.target === modal) finishClose(false);
+      });
+    }
+    if (type === "username" && modal.querySelector('#acceptUsernameBtn')) {
+      modal.querySelector('#acceptUsernameBtn').onclick = function() {
+        const chosen = modal.querySelector('input[name="usernameSuggestion"]:checked');
+        if (chosen && typeof onAcceptSuggestion === "function") {
+          onAcceptSuggestion(chosen.value, true);
         }
-    });
-});
-  // ---- 7.4: DOM Selectors ----
+        finishClose(true);
+      };
+    }
+  }
+
+  // ---- 7.3: DOM Selectors ----
 
   const form = document.getElementById('signupForm');
   if (!form) return;
@@ -753,7 +838,7 @@ $(document).ready(function() {
 
   let triedSubmit = false;
 
-  // ---- 7.5: Phone 2 Field Logic ----
+  // ---- 7.4: Phone 2 Field Logic ----
 
   function hidePhone2Fields() {
     if (phone2wrap) phone2wrap.style.display = "none";
@@ -843,7 +928,7 @@ $(document).ready(function() {
     updatePhones();
   });
 
-  // ---- 7.6: Firestore Duplicate Checks (async) ----
+  // ---- 7.5: Firestore Duplicate Checks (async) ----
 
   async function checkEmail(emailValue) {
     if (!window.firebaseSignup || !window.firebaseSignup.checkEmailExists) return false;
@@ -867,17 +952,40 @@ $(document).ready(function() {
     return arr.slice(0, 3);
   }
 
-  // ---- 7.7: Live Duplicate Checks - on input (not just blur) ----
+  // ---- 7.6: Real-Time Duplicate Checks & Stacked Email/Username Modal Logic ----
 
-  if (username) username.addEventListener('input', async function () {
-    const userVal = username.value.trim();
-    if (userVal.length >= 5 && await checkUsername(userVal)) {
-      let suggestions = await suggestUsernames(userVal);
+  async function runStackedChecks() {
+    const emailVal = email.value.trim();
+    const usernameVal = username.value.trim();
+    if (!emailVal && !usernameVal) return;
+
+    let [emailTaken, usernameTaken] = await Promise.all([
+      emailVal ? await checkEmail(emailVal) : false,
+      usernameVal ? await checkUsername(usernameVal) : false
+    ]);
+
+    if (emailTaken) {
+      showErrorModal({
+        type: "email",
+        title: "Whoops!",
+        messages: [
+          "This email address is already registered to another account. Please use another email address or log into your existing account."
+        ],
+        onClose: () => {
+          email.value = "";
+          email.focus();
+        }
+      });
+    }
+    if (usernameTaken) {
+      let suggestions = await suggestUsernames(usernameVal);
       showErrorModal({
         type: "username",
         title: "Whoops!",
-        messages: ["The username is already taken. Please select one of the alternate options below."],
-        suggestions,
+        messages: [
+          "The username is already taken. Please select one of the alternate options below."
+        ],
+        suggestions: suggestions,
         onAcceptSuggestion: (selectedUsername) => {
           username.value = selectedUsername;
           username.focus();
@@ -888,23 +996,14 @@ $(document).ready(function() {
         }
       });
     }
-  });
+  }
 
-  if (email) email.addEventListener('input', async function () {
-    const emailVal = email.value.trim();
-    if (emailVal.length >= 6 && await checkEmail(emailVal)) {
-      showErrorModal({
-        type: "email",
-        title: "Whoops!",
-        messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
-        onClose: () => {
-          email.value = "";
-          email.focus();
-        }
-      });
-    }
-  });
+  // -- On form submission, stack both if both are taken
+  // -- On input/blur, only pop one if only one is present, or both if both
+  if (username) username.addEventListener('blur', runStackedChecks);
+  if (email) email.addEventListener('blur', runStackedChecks);
 
+  // Phone duplicate checks (old working method)
   if (phone1) phone1.addEventListener('blur', async function () {
     const val = cleanPhoneVal(phone1.value);
     if (!val) return;
@@ -923,7 +1022,6 @@ $(document).ready(function() {
       });
     }
   });
-
   if (phone2) phone2.addEventListener('blur', async function () {
     const val = cleanPhoneVal(phone2.value);
     if (!val) return;
@@ -941,7 +1039,7 @@ $(document).ready(function() {
     }
   });
 
-  // ---- 7.8: Notification Checkbox Logic ----
+  // ---- 7.7: Notification Checkbox Logic ----
 
   function enforceNotificationCheckboxes() {
     const emailChecked = notifyEmail && notifyEmail.checked;
@@ -986,7 +1084,7 @@ $(document).ready(function() {
   });
   enforceNotificationCheckboxes();
 
-  // ---- 7.9: Autofill username from email ----
+  // ---- 7.8: Autofill username from email ----
 
   let lastAutofilledEmail = "";
   function isValidEmailSuffix(email) {
@@ -1012,7 +1110,7 @@ $(document).ready(function() {
     });
   }
 
-  // ---- 7.10: Button/Validation State ----
+  // ---- 7.9: Button/Validation State ----
 
   window.setNextStepBtnState = function () {
     if (nextStepBtn) {
@@ -1072,7 +1170,7 @@ $(document).ready(function() {
   });
   setNextStepBtnState();
 
-  // ---- 7.11: Field Highlight on Error ----
+  // ---- 7.10: Field Highlight on Error ----
 
   function highlightFields(fields) {
     [firstName, lastName, username, email, phone1, phone2, password, confirmPassword].forEach(el => el && el.classList.remove('input-error'));
@@ -1085,7 +1183,7 @@ $(document).ready(function() {
     }
   }
 
-  // ---- 7.12: Validation & Next Step Modal ----
+  // ---- 7.11: Validation & Next Step Modal ----
 
   function validate(showErrorsOnSubmit = false) {
     let valid = true;
@@ -1185,7 +1283,7 @@ $(document).ready(function() {
     return valid;
   }
 
-  // ---- 7.13: Autofill on Paste ----
+  // ---- 7.12: Autofill on Paste ----
 
   [firstName, lastName, username, email, phone1, phone2].forEach(el => {
     if (el) el.addEventListener('paste', function () {
@@ -1193,90 +1291,36 @@ $(document).ready(function() {
     });
   });
 
-  // ---- 7.14: Submission Handler ----
+  // ---- 7.13: Submission Handler ----
 
-if (form) {
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-    triedSubmit = true;
-    setNextStepBtnState();
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      triedSubmit = true;
+      setNextStepBtnState();
 
-    if (!validate(true)) return false;
+      if (!validate(true)) return false;
 
-    // Final combined duplicate check for email and username
-    const emailVal = email.value.trim();
-    const userVal = username.value.trim();
-    let emailDup = false, userDup = false, suggestions = [];
+      // Final combined duplicate check for email and username, show both if needed
+      const emailVal = email.value.trim();
+      const userVal = username.value.trim();
+      let emailDup = false, userDup = false, suggestions = [];
 
-    if (emailVal) emailDup = await checkEmail(emailVal);
-    if (userVal) userDup = await checkUsername(userVal);
-    if (userDup) suggestions = await suggestUsernames(userVal);
+      if (emailVal) emailDup = await checkEmail(emailVal);
+      if (userVal) userDup = await checkUsername(userVal);
+      if (userDup) suggestions = await suggestUsernames(userVal);
 
-    if (emailDup && userDup) {
-      // --- FIX: STACK BOTH MODALS AT ONCE! ---
-      showErrorModal({
-        type: "email",
-        title: "Whoops!",
-        messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
-        lockOverlay: true,
-        onClose: () => {
-          email.value = "";
-          email.focus();
-        }
-      });
-      showErrorModal({
-        type: "username",
-        title: "Whoops!",
-        messages: ["The username is already taken. Please select one of the alternate options below."],
-        suggestions,
-        lockOverlay: true,
-        onAcceptSuggestion: (selectedUsername) => {
-          username.value = selectedUsername;
-          username.focus();
-        },
-        onClose: () => {
-          username.value = "";
-          username.focus();
-        }
-      });
-      return false;
-    }
-    if (emailDup) {
-      showErrorModal({
-        type: "email",
-        title: "Whoops!",
-        messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
-        onClose: () => {
-          email.value = "";
-          email.focus();
-        }
-      });
-      return false;
-    }
-    if (userDup) {
-      showErrorModal({
-        type: "username",
-        title: "Whoops!",
-        messages: ["The username is already taken. Please select one of the alternate options below."],
-        suggestions,
-        onAcceptSuggestion: (selectedUsername) => {
-          username.value = selectedUsername;
-          username.focus();
-        },
-        onClose: () => {
-          username.value = "";
-          username.focus();
-        }
-      });
-      return false;
-    }
+      // Use the runStackedChecks function to display both modals, if needed
+      if (emailDup || userDup) {
+        runStackedChecks();
+        return false;
+      }
 
-    // ...proceed to next step (verification code, etc.) here...
-  });
-}
+      // ...proceed to next step (verification code, etc.) here...
+    });
+  }
 
-
-  // ---- 7.15: Focus/Blur Style for Error Removal ----
+  // ---- 7.14: Focus/Blur Style for Error Removal ----
 
   [firstName, lastName, username, email, phone1, phone2, password, confirmPassword].forEach(el => {
     if (el) {
@@ -1286,14 +1330,13 @@ if (form) {
     }
   });
 
-  // ---- 7.16: Initial State ----
+  // ---- 7.15: Initial State ----
 
   hidePhone2Fields();
   updatePhones();
   enforceNotificationCheckboxes();
   setNextStepBtnState();
 };
-
 
 // =====================================================
 // Section 8: reCAPTCHA Callback and Verification Logic
