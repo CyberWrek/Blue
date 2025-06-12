@@ -609,217 +609,121 @@ function showSignUpButton() {
 
 window.initSignupForm = function() {
 
-  // ---- 7.1: Helper Functions ----
+// Section 7.1: Modal Display Function
+// ===================================
+function displayEmailUsernameModals(emailTaken, usernameTaken) {
+    const emailTakenModal = $('#emailTakenModal'); // jQuery selector for email modal element
+    const usernameTakenModal = $('#usernameTakenModal'); // jQuery selector for username modal element
 
-  function isValidEmail(val) {
-    return /^\S+@\S+\.\S+$/.test(val);
-  }
-  function isValidPhone(val) {
-    return val.replace(/\D/g, '').length >= 3;
-  }
-  function cleanPhoneVal(val) {
-    return val ? val.replace(/\D/g, '') : '';
-  }
+    let showEmailModal = emailTaken;
+    let showUsernameModal = usernameTaken;
 
-  // ---- 7.2: Stacked Modal Overlay, Renderer & Positioning ----
+    // Check if either email or username is taken
+    if (showEmailModal || showUsernameModal) {
+        // If an email or username is taken, apply the overlay and blur
+        showModalOverlayAndBlur();
 
-  function ensureErrorOverlay() {
-    let overlay = document.getElementById('modal-error-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'modal-error-overlay';
-      document.body.appendChild(overlay);
-    }
-    overlay.style.display = 'flex';
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100vw';
-    overlay.style.height = '100vh';
-    overlay.style.background = 'rgba(216,44,44,0.35)';
-    overlay.style.backdropFilter = 'blur(3px)';
-    overlay.style.zIndex = '9998';
-    overlay.style.opacity = '1';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.pointerEvents = 'all';
-  }
-  function removeErrorOverlay() {
-    let overlay = document.getElementById('modal-error-overlay');
-    if (overlay) {
-      overlay.style.display = 'none';
-      overlay.style.opacity = '0';
-    }
-  }
-
-  function stackErrorModals(initial = true) {
-    const emailModal = document.getElementById('globalErrorModal-email');
-    const usernameModal = document.getElementById('globalErrorModal-username');
-    const GAP = 20;
-    const vh = window.innerHeight;
-    const fallbackHeight = 180;
-
-    function setModal(modal, topPx, z) {
-      if (!modal) return;
-      modal.style.left = "50%";
-      modal.style.top = topPx + "px";
-      modal.style.transform = "translateX(-50%)";
-      modal.style.zIndex = z;
-      modal.style.display = "flex";
-    }
-
-    [emailModal, usernameModal].forEach(m => {
-      if (m) m.style.transition = initial ? 'none' : 'top 0.7s cubic-bezier(.7,0,.23,1)';
-    });
-
-    if (emailModal && usernameModal) {
-      const mh1 = emailModal.offsetHeight || fallbackHeight;
-      const mh2 = usernameModal.offsetHeight || fallbackHeight;
-      const total = mh1 + GAP + mh2;
-      const topStart = Math.round((vh - total) / 2);
-
-      setModal(emailModal, topStart, 10011);
-      setModal(usernameModal, topStart + mh1 + GAP, 10010);
-    } else if (emailModal) {
-      const mh = emailModal.offsetHeight || fallbackHeight;
-      const topCenter = Math.round((vh - mh) / 2);
-      setModal(emailModal, topCenter, 10010);
-    } else if (usernameModal) {
-      const mh = usernameModal.offsetHeight || fallbackHeight;
-      const topCenter = Math.round((vh - mh) / 2);
-      setModal(usernameModal, topCenter, 10010);
-    }
-
-    if (initial) {
-      setTimeout(() => {
-        [emailModal, usernameModal].forEach(m => {
-          if (m) m.style.transition = 'top 0.7s cubic-bezier(.7,0,.23,1)';
-        });
-      }, 35);
-    }
-  }
-
-  // ---- 7.3: Generic Stacked Modal API ----
-
-  function showErrorModal(opts = {}) {
-    // opts.type: "email" | "username" | "default"
-    const {
-      type = "default",
-      title = "Whoops!",
-      messages = [],
-      suggestions = null,
-      onAcceptSuggestion = null,
-      onClose = null,
-      lockOverlay = true   // overlays should never close on background click!
-    } = opts;
-
-    ensureErrorOverlay();
-
-    // Modal ID per type
-    const modalId = type === "email" ? "globalErrorModal-email"
-                  : type === "username" ? "globalErrorModal-username"
-                  : "globalErrorModal";
-    const oldModal = document.getElementById(modalId);
-    if (oldModal) oldModal.remove();
-
-    // Always remove both other modals if this is a "default"
-    if (type === "default") {
-      ["globalErrorModal-email", "globalErrorModal-username"].forEach(id => {
-        const other = document.getElementById(id);
-        if (other) other.remove();
-      });
-    }
-
-    const modal = document.createElement('div');
-    modal.id = modalId;
-    modal.className = 'modal-modal active stacked-error-modal ' + (type ? `modal-${type}` : '');
-
-    let suggestionHtml = '';
-    if (type === "username" && Array.isArray(suggestions) && suggestions.length) {
-      suggestionHtml = `
-        <form id="usernameSuggestionForm">
-          ${suggestions.map((s, i) => `
-            <label style="display:flex;align-items:center;margin-bottom:7px;">
-              <input type="radio" name="usernameSuggestion" value="${s}" ${i === 0 ? "checked" : ""}>
-              <span>${s}</span>
-            </label>
-          `).join("")}
-        </form>
-        <button id="acceptUsernameBtn" class="btn" type="button" style="margin-top:12px;">Accept Username</button>
-      `;
-    }
-
-    modal.innerHTML = `
-      <div class="modal-content" style="background: white; padding: 24px 32px 32px 32px; border-radius: 14px; min-width:340px; max-width: 430px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); position:relative;">
-        <button id="closeGlobalError" class="modal-close" aria-label="Close" style="position:absolute;top:16px;right:16px;font-size:1.5rem;">&times;</button>
-        <div class="modal-title" style="font-size:1.3rem;font-weight:600;margin-bottom:12px;">${title}</div>
-        <ul id="globalErrorList" style="margin:0 0 18px 0; padding-left:20px;">
-          ${messages.map(msg => `<li style="color:#b12; margin-bottom:8px;">${msg}</li>`).join('')}
-        </ul>
-        ${suggestionHtml}
-      </div>
-    `;
-
-    // --- No transition on open; enable after 1 frame ---
-    modal.style.transition = "none";
-    document.body.appendChild(modal);
-    stackErrorModals(true);
-
-    // Center modal ALWAYS if default type
-    if (type === "default") {
-      modal.style.left = "50%";
-      modal.style.top = "50%";
-      modal.style.transform = "translate(-50%, -50%)";
-      modal.style.zIndex = "10010";
-      modal.style.display = "flex";
-    }
-
-    requestAnimationFrame(() => {
-      modal.style.transition = "top 0.7s cubic-bezier(.7,0,.23,1)";
-    });
-
-    // Close via X or ESC only. Never overlay click (unless lockOverlay: false).
-    function finishClose(accepted) {
-      modal.remove();
-      if (typeof onClose === "function") onClose(accepted);
-      setTimeout(() => {
-        stackErrorModals(false);
-        if (!document.getElementById('globalErrorModal-email') && !document.getElementById('globalErrorModal-username')) {
-          removeErrorOverlay();
+        // Determine which specific modals to show based on validation results
+        if (showEmailModal && showUsernameModal) {
+            // Both email and username are taken, show both modals
+            // Use Bootstrap's modal('show') method
+            emailTakenModal.modal('show');
+            usernameTakenModal.modal('show');
+        } else if (showEmailModal) {
+            // Only email is taken, show the email modal
+            emailTakenModal.modal('show');
+        } else if (showUsernameModal) {
+            // Only username is taken, show the username modal
+            usernameTakenModal.modal('show');
         }
-      }, 10);
+    } else {
+        // If neither email nor username is taken, ensure all modals are hidden
+        // and remove the overlay and blur effects.
+        hideModalOverlayAndBlur(); // Remove overlay and blur
+        emailTakenModal.modal('hide'); // Ensure email modal is hidden
+        usernameTakenModal.modal('hide'); // Ensure username modal is hidden
     }
-    modal.querySelector('#closeGlobalError').onclick = function() {
-      finishClose(false);
-    };
-    modal.addEventListener('keydown', function(e) {
-      if (e.key === "Escape") finishClose(false);
-    });
-    // Overlay never closes modal if locked
-    if (!lockOverlay) {
-      modal.addEventListener('mousedown', function(e) {
-        if (e.target === modal) finishClose(false);
-      });
-    }
-    // Username suggestion accept
-    if (type === "username" && modal.querySelector('#acceptUsernameBtn')) {
-      modal.querySelector('#acceptUsernameBtn').onclick = function() {
-        const chosen = modal.querySelector('input[name="usernameSuggestion"]:checked');
-        if (chosen && typeof onAcceptSuggestion === "function") {
-          onAcceptSuggestion(chosen.value, true);
-        }
-        finishClose(true);
-      };
-    }
-    // ESC key closes modal
-    document.addEventListener('keydown', function handler(e) {
-      if (e.key === "Escape") {
-        finishClose(false);
-        document.removeEventListener('keydown', handler);
-      }
-    });
-  }
+}
 
+// Section 7.2: Modal Event Listeners for Overlay Hiding
+// ======================================================
+$(document).ready(function() {
+    // Listener for when the email taken modal is fully hidden
+    $('#emailTakenModal').on('hidden.bs.modal', function () {
+        // Check if the username modal is currently visible.
+        // If it's NOT visible, then hide the overlay and blur.
+        // This ensures the overlay remains if the other modal is still open.
+        if (!$('#usernameTakenModal').is(':visible')) {
+            hideModalOverlayAndBlur();
+        }
+    });
+
+    // Listener for when the username taken modal is fully hidden
+    $('#usernameTakenModal').on('hidden.bs.modal', function () {
+        // Check if the email modal is currently visible.
+        // If it's NOT visible, then hide the overlay and blur.
+        if (!$('#emailTakenModal').is(':visible')) {
+            hideModalOverlayAndBlur();
+        }
+    });
+});
+
+// Section 7.3: Email/Username Input Event Listeners
+// ===============================================
+$(document).ready(function() {
+    // Listener for email input field: Handles auto-population and validation checks
+    $('#email').on('blur keyup', function() { // Use blur and keyup for immediate feedback and final check
+        const emailInput = $(this);
+        const usernameInput = $('#username');
+        const emailValue = emailInput.val().trim();
+
+        // 7.3.1: Auto-populate Username if empty and email is valid enough
+        if (emailValue.length > 0 && usernameInput.val().trim() === '') {
+            // Simple logic to create a username from email (before '@' symbol)
+            const usernameSuggestion = emailValue.split('@')[0];
+            if (usernameSuggestion) {
+                usernameInput.val(usernameSuggestion);
+            }
+        }
+
+        // 7.3.2: Trigger Email and Username validation checks
+        if (emailValue.length > 0) { // Only check if email has content
+            // Assuming checkIfEmailTaken and checkIfUsernameTaken are defined elsewhere and manage Firestore checks
+            // These functions should eventually call displayEmailUsernameModals based on their results.
+            checkIfEmailTaken(emailValue);
+        } else {
+            // If email is empty, ensure modals are hidden
+            displayEmailUsernameModals(false, false);
+            // Also clear username if it was auto-populated from an empty email
+            if (usernameInput.data('autoPopulated')) { // Using a data attribute to track auto-population
+                usernameInput.val('');
+                usernameInput.removeData('autoPopulated');
+            }
+        }
+
+        // Check username validity as well, especially if it was auto-populated or user changed it
+        const usernameValue = usernameInput.val().trim();
+        if (usernameValue.length > 0) {
+            checkIfUsernameTaken(usernameValue);
+        } else {
+            // If username is empty, ensure username modal is hidden
+            displayEmailUsernameModals(false, false); // This might be redundant if already called for email
+        }
+    });
+
+    // Listener for username input field: Only checks username validity on its own
+    $('#username').on('blur keyup', function() {
+        const usernameInput = $(this);
+        const usernameValue = usernameInput.val().trim();
+
+        if (usernameValue.length > 0) { // Only check if username has content
+            checkIfUsernameTaken(usernameValue);
+        } else {
+            // If username is empty, ensure username modal is hidden
+            displayEmailUsernameModals(false, false);
+        }
+    });
+});
   // ---- 7.4: DOM Selectors ----
 
   const form = document.getElementById('signupForm');
