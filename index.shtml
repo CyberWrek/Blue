@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!--#include virtual="includes/header.shtml" -->
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Blue NHW</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon"/>
 
-  <!-- LOGIN PAGE STYLES -->
   <link rel="stylesheet" href="css/index.css"/>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
 
   <style>
     body.login-page {
@@ -128,18 +128,16 @@
 
   <iframe id="tour-iframe" src="" title="Blue Sign Up Tour" tabindex="-1" aria-hidden="true"></iframe>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="js/jquery-3.7.1.min.js"></script> <script src="js/bootstrap.bundle.min.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script src="js/firebase.js"></script>
-
-  <script src="js/index.js"></script>
-  <script>
+<script src="js/index.js"></script>
+<script src="js/tour.js"></script> <script>
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
     });
   </script>
-  <!--#include virtual="includes/footer.shtml" -->
-</body>
+  </body>
 </html>
