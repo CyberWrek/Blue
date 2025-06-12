@@ -607,7 +607,7 @@ function showSignUpButton() {
 // Section 7: Signup Form, Validation, and Stacked Modals
 // =====================================================
 
-window.initSignupForm = function() {
+window.initSignupForm = function () {
 
   // ---- 7.1: Helper Functions ----
 
@@ -621,7 +621,7 @@ window.initSignupForm = function() {
     return val ? val.replace(/\D/g, '') : '';
   }
 
-  // ---- 7.2: Stacked Modal Overlay, Renderer & Positioning ----
+  // ---- 7.2: Stacked Modal Overlay & Renderer ----
 
   function ensureErrorOverlay() {
     let overlay = document.getElementById('modal-error-overlay');
@@ -651,6 +651,8 @@ window.initSignupForm = function() {
       overlay.style.opacity = '0';
     }
   }
+
+  // ---- 7.2a: Stacked Modal Positioning & Animation ----
 
   function stackErrorModals(initial = true) {
     const emailModal = document.getElementById('globalErrorModal-email');
@@ -699,6 +701,8 @@ window.initSignupForm = function() {
     }
   }
 
+  // ---- 7.2b: Stacked Modal API (Unified) ----
+
   function showErrorModal(opts = {}) {
     // opts.type: "email" | "username" | "default"
     const {
@@ -708,7 +712,7 @@ window.initSignupForm = function() {
       suggestions = null,
       onAcceptSuggestion = null,
       onClose = null,
-      lockOverlay = true   // overlays should never close on background click!
+      lockOverlay = true // Only close via X or Accept
     } = opts;
 
     ensureErrorOverlay();
@@ -717,10 +721,11 @@ window.initSignupForm = function() {
     const modalId = type === "email" ? "globalErrorModal-email"
                   : type === "username" ? "globalErrorModal-username"
                   : "globalErrorModal";
+    // Remove if already exists
     const oldModal = document.getElementById(modalId);
     if (oldModal) oldModal.remove();
 
-    // Always remove both other modals if this is a "default"
+    // Remove both others if default
     if (type === "default") {
       ["globalErrorModal-email", "globalErrorModal-username"].forEach(id => {
         const other = document.getElementById(id);
@@ -763,43 +768,39 @@ window.initSignupForm = function() {
     document.body.appendChild(modal);
     stackErrorModals(true);
 
-    // Center modal ALWAYS if default type
-    if (type === "default") {
-      modal.style.left = "50%";
-      modal.style.top = "50%";
-      modal.style.transform = "translate(-50%, -50%)";
-      modal.style.zIndex = "10010";
-      modal.style.display = "flex";
-    }
-
     requestAnimationFrame(() => {
       modal.style.transition = "top 0.7s cubic-bezier(.7,0,.23,1)";
     });
 
-    // Close via X or suggestion
+    // Close via X only (or Accept on username modal)
     function finishClose(accepted) {
       modal.remove();
       if (typeof onClose === "function") onClose(accepted);
       setTimeout(() => {
         stackErrorModals(false);
-        if (!document.getElementById('globalErrorModal-email') && !document.getElementById('globalErrorModal-username')) {
+        if (
+          !document.getElementById('globalErrorModal-email') &&
+          !document.getElementById('globalErrorModal-username')
+        ) {
           removeErrorOverlay();
         }
       }, 10);
     }
-    modal.querySelector('#closeGlobalError').onclick = function() {
+    modal.querySelector('#closeGlobalError').onclick = function () {
       finishClose(false);
     };
-    modal.addEventListener('keydown', function(e) {
+    modal.addEventListener('keydown', function (e) {
       if (e.key === "Escape") finishClose(false);
     });
+    // Overlay never closes modal
     if (!lockOverlay) {
-      modal.addEventListener('mousedown', function(e) {
+      modal.addEventListener('mousedown', function (e) {
         if (e.target === modal) finishClose(false);
       });
     }
+    // Username suggestion accept
     if (type === "username" && modal.querySelector('#acceptUsernameBtn')) {
-      modal.querySelector('#acceptUsernameBtn').onclick = function() {
+      modal.querySelector('#acceptUsernameBtn').onclick = function () {
         const chosen = modal.querySelector('input[name="usernameSuggestion"]:checked');
         if (chosen && typeof onAcceptSuggestion === "function") {
           onAcceptSuggestion(chosen.value, true);
@@ -807,9 +808,16 @@ window.initSignupForm = function() {
         finishClose(true);
       };
     }
+    // Esc key closes
+    document.addEventListener('keydown', function handler(e) {
+      if (e.key === "Escape") {
+        finishClose(false);
+        document.removeEventListener('keydown', handler);
+      }
+    });
   }
 
-  // ---- 7.3: DOM Selectors ----
+  // ---- 7.3: Field/DOM Selectors ----
 
   const form = document.getElementById('signupForm');
   if (!form) return;
@@ -952,40 +960,37 @@ window.initSignupForm = function() {
     return arr.slice(0, 3);
   }
 
-  // ---- 7.6: Real-Time Duplicate Checks & Stacked Email/Username Modal Logic ----
+  // ---- 7.6: Real-Time Duplicate Checks (input events) ----
 
-  async function runStackedChecks() {
+  // Modal stack manager for email/username in real time
+  async function handleEmailInput() {
     const emailVal = email.value.trim();
-    const usernameVal = username.value.trim();
-    if (!emailVal && !usernameVal) return;
-
-    let [emailTaken, usernameTaken] = await Promise.all([
-      emailVal ? await checkEmail(emailVal) : false,
-      usernameVal ? await checkUsername(usernameVal) : false
-    ]);
-
-    if (emailTaken) {
+    if (emailVal.length >= 6 && await checkEmail(emailVal)) {
+      // Remove any existing modal to avoid stack overflow
+      if (document.getElementById('globalErrorModal-email')) return;
       showErrorModal({
         type: "email",
         title: "Whoops!",
-        messages: [
-          "This email address is already registered to another account. Please use another email address or log into your existing account."
-        ],
+        messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
+        lockOverlay: true,
         onClose: () => {
           email.value = "";
           email.focus();
         }
       });
     }
-    if (usernameTaken) {
-      let suggestions = await suggestUsernames(usernameVal);
+  }
+  async function handleUsernameInput() {
+    const userVal = username.value.trim();
+    if (userVal.length >= 5 && await checkUsername(userVal)) {
+      if (document.getElementById('globalErrorModal-username')) return;
+      let suggestions = await suggestUsernames(userVal);
       showErrorModal({
         type: "username",
         title: "Whoops!",
-        messages: [
-          "The username is already taken. Please select one of the alternate options below."
-        ],
-        suggestions: suggestions,
+        messages: ["The username is already taken. Please select one of the alternate options below."],
+        suggestions,
+        lockOverlay: true,
         onAcceptSuggestion: (selectedUsername) => {
           username.value = selectedUsername;
           username.focus();
@@ -997,13 +1002,11 @@ window.initSignupForm = function() {
       });
     }
   }
+  if (email) email.addEventListener('input', handleEmailInput);
+  if (username) username.addEventListener('input', handleUsernameInput);
 
-  // -- On form submission, stack both if both are taken
-  // -- On input/blur, only pop one if only one is present, or both if both
-  if (username) username.addEventListener('blur', runStackedChecks);
-  if (email) email.addEventListener('blur', runStackedChecks);
+  // ---- 7.7: Firestore Duplicate Checks (blur for phone) ----
 
-  // Phone duplicate checks (old working method)
   if (phone1) phone1.addEventListener('blur', async function () {
     const val = cleanPhoneVal(phone1.value);
     if (!val) return;
@@ -1039,7 +1042,7 @@ window.initSignupForm = function() {
     }
   });
 
-  // ---- 7.7: Notification Checkbox Logic ----
+  // ---- 7.8: Notification Checkbox Logic ----
 
   function enforceNotificationCheckboxes() {
     const emailChecked = notifyEmail && notifyEmail.checked;
@@ -1084,7 +1087,7 @@ window.initSignupForm = function() {
   });
   enforceNotificationCheckboxes();
 
-  // ---- 7.8: Autofill username from email ----
+  // ---- 7.9: Autofill username from email ----
 
   let lastAutofilledEmail = "";
   function isValidEmailSuffix(email) {
@@ -1110,7 +1113,7 @@ window.initSignupForm = function() {
     });
   }
 
-  // ---- 7.9: Button/Validation State ----
+  // ---- 7.10: Button/Validation State ----
 
   window.setNextStepBtnState = function () {
     if (nextStepBtn) {
@@ -1170,7 +1173,7 @@ window.initSignupForm = function() {
   });
   setNextStepBtnState();
 
-  // ---- 7.10: Field Highlight on Error ----
+  // ---- 7.11: Highlight Fields on Error ----
 
   function highlightFields(fields) {
     [firstName, lastName, username, email, phone1, phone2, password, confirmPassword].forEach(el => el && el.classList.remove('input-error'));
@@ -1183,7 +1186,7 @@ window.initSignupForm = function() {
     }
   }
 
-  // ---- 7.11: Validation & Next Step Modal ----
+  // ---- 7.12: Validation ----
 
   function validate(showErrorsOnSubmit = false) {
     let valid = true;
@@ -1283,7 +1286,7 @@ window.initSignupForm = function() {
     return valid;
   }
 
-  // ---- 7.12: Autofill on Paste ----
+  // ---- 7.13: Autofill on Paste ----
 
   [firstName, lastName, username, email, phone1, phone2].forEach(el => {
     if (el) el.addEventListener('paste', function () {
@@ -1291,7 +1294,7 @@ window.initSignupForm = function() {
     });
   });
 
-  // ---- 7.13: Submission Handler ----
+  // ---- 7.14: Submission Handler ----
 
   if (form) {
     form.addEventListener('submit', async function (e) {
@@ -1301,7 +1304,7 @@ window.initSignupForm = function() {
 
       if (!validate(true)) return false;
 
-      // Final combined duplicate check for email and username, show both if needed
+      // Final combined duplicate check for email and username
       const emailVal = email.value.trim();
       const userVal = username.value.trim();
       let emailDup = false, userDup = false, suggestions = [];
@@ -1310,9 +1313,62 @@ window.initSignupForm = function() {
       if (userVal) userDup = await checkUsername(userVal);
       if (userDup) suggestions = await suggestUsernames(userVal);
 
-      // Use the runStackedChecks function to display both modals, if needed
-      if (emailDup || userDup) {
-        runStackedChecks();
+      if (emailDup && userDup) {
+        // Show both stacked modals!
+        showErrorModal({
+          type: "email",
+          title: "Whoops!",
+          messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
+          lockOverlay: true,
+          onClose: () => {
+            email.value = "";
+            email.focus();
+          }
+        });
+        showErrorModal({
+          type: "username",
+          title: "Whoops!",
+          messages: ["The username is already taken. Please select one of the alternate options below."],
+          suggestions,
+          lockOverlay: true,
+          onAcceptSuggestion: (selectedUsername) => {
+            username.value = selectedUsername;
+            username.focus();
+          },
+          onClose: () => {
+            username.value = "";
+            username.focus();
+          }
+        });
+        return false;
+      }
+      if (emailDup) {
+        showErrorModal({
+          type: "email",
+          title: "Whoops!",
+          messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
+          onClose: () => {
+            email.value = "";
+            email.focus();
+          }
+        });
+        return false;
+      }
+      if (userDup) {
+        showErrorModal({
+          type: "username",
+          title: "Whoops!",
+          messages: ["The username is already taken. Please select one of the alternate options below."],
+          suggestions,
+          onAcceptSuggestion: (selectedUsername) => {
+            username.value = selectedUsername;
+            username.focus();
+          },
+          onClose: () => {
+            username.value = "";
+            username.focus();
+          }
+        });
         return false;
       }
 
@@ -1320,7 +1376,7 @@ window.initSignupForm = function() {
     });
   }
 
-  // ---- 7.14: Focus/Blur Style for Error Removal ----
+  // ---- 7.15: Focus/Blur Style for Error Removal ----
 
   [firstName, lastName, username, email, phone1, phone2, password, confirmPassword].forEach(el => {
     if (el) {
@@ -1330,7 +1386,7 @@ window.initSignupForm = function() {
     }
   });
 
-  // ---- 7.15: Initial State ----
+  // ---- 7.16: Initial State ----
 
   hidePhone2Fields();
   updatePhones();
