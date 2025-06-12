@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>HQ Dashboard – BlueHQ</title>
+
+  <!-- shared head (meta tags, favicon, etc.) -->
+  <!--#include virtual="/includes/header.shtml"-->
+
+  <!-- core styles -->
+  <link rel="stylesheet" href="/css/general.css"/>
+  <link rel="stylesheet" href="/css/dashboard.css"/>
+  <link rel="stylesheet" href="/css/sidebar.css"/>
+  <link rel="stylesheet" href="/css/bluehq/hq-dash.css"/>
+  <link rel="stylesheet" href="/css/bluehq/profile.css"/>
+</head>
+<body class="hq-dashboard" data-user-type="bluehq">
+  <!-- sidebar + its X button + logo -->
+  <!--#include virtual="/includes/sidebar.shtml"-->
+
+  <!-- top-left static logo -->
+  <!--#include virtual="/includes/static-logo.shtml"-->
+
+  <!-- top navigation bar -->
+  <!--#include virtual="/includes/top-menu.shtml"-->
+
+  <!-- ───────────────────────── Workspace ───────────────────────── -->
+  <div class="workspace">
+    <div class="single-container">
+      <h2 class="page-title">HQ Dashboard</h2>
+      <button id="add-user-btn" class="btn">+ Add User</button>
+
+      <table id="users-table" class="table">
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Account Type</th>
+            <th>Blue Acct</th>
+            <th>Roles</th>
+            <th>Email</th>
+            <th>Primary?</th>
+            <th>Active?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- populated by js/dashboard.js → loadUsers() -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- core scripts -->
+  <script type="module" src="/js/firebase.js"></script>
+  <script type="module" src="/js/dashboard.js"></script>
+  <script type="module" src="/js/hq-dash.js"></script>
+
+  <!-- shared footer (closing body/html) -->
+  <!--#include virtual="/includes/footer.shtml"-->
+</body>
+</html>

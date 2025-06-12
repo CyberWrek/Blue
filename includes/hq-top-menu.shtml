@@ -1,0 +1,11 @@
+<nav class="menu">
+  <ul class="menu-left">
+    <li><a href="/shtml/bluehq/hq-dash.shtml" aria-label="Dashboard">Dashboard</a></li>
+    <li><a href="/shtml/bluehq/clients.shtml"  aria-label="Clients">Clients</a></li>
+    <li><a href="/shtml/bluehq/new-user.shtml" aria-label="New Account">New Account</a></li>
+  </ul>
+  <ul class="menu-right">
+    <li><a href="/shtml/bluehq/inbox.shtml"     aria-label="Inbox">Inbox</a></li>
+    <li><a href="/shtml/bluehq/reminders.shtml" aria-label="Reminders">Reminders</a></li>
+  </ul>
+</nav>

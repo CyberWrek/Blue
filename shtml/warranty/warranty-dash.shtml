@@ -1,0 +1,34 @@
+<!--#include virtual="includes/header.shtml" -->
+
+<!-- include the sidebar + overlay -->
+<!--#include virtual="includes/sidebar.shtml" -->
+<!--#include virtual="includes/static-logo.shtml" -->
+<!--#include virtual="includes/help-button.shtml" -->
+
+  <!-- Top Menu -->
+  <nav class="menu">
+    <ul class="menu-left">
+      <li class="active">Dashboard</li>
+      <li>Defect Search</li>
+      <li>Directory</li>
+      <li>Properties</li>
+      <li>Resources</li>
+    </ul>
+    <ul class="menu-right">
+      <li>Inbox</li>
+      <li>Reminders</li>
+      <li>Service Requests</li>
+      <li>Claims</li>
+      <li>Inspections</li>
+    </ul>
+  </nav>
+
+  <!-- Workspace -->
+  <div class="workspace">
+    <h2 class="page-title">Warranty Provider Dashboard</h2>
+    <div class="content-box">
+      <!-- Widgets here -->
+    </div>
+  </div>
+
+<!--#include virtual="includes/footer.shtml" -->

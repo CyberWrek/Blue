@@ -1,0 +1,5 @@
+  <!-- Firebase + Sidebar + Gear-tab + HQ logic -->
+  <script type="module" src="js/dashboard.js"></script>
+  <script type="module" src="js/hq.js"></script>
+</body>
+</html>

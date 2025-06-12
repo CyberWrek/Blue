@@ -1,0 +1,282 @@
+/* Static Logo (top‐left) */
+.static-logo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 160px;
+  z-index: 1000;
+}
+
+/* Top Menu */
+.menu {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.menu-left,
+.menu-right {
+  list-style: none;
+  display: flex;
+  gap: 10px;
+}
+
+.menu-left li,
+.menu-right li {
+  padding: 4px 16px;
+  background: #0071BC;
+  color: white;
+  border: 1px solid grey;
+  border-radius: 5px;
+  box-shadow: 5px 5px 4px rgba(0,0,0,0.1);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.menu-left li:hover,
+.menu-right li:hover,
+.menu-left li.active,
+.menu-right li.active {
+  background: #46B2FA;
+}
+
+.menu-left li a,
+.menu-right li a {
+  display: inline-flex;           /* make them flex containers */
+  align-items: center;            /* vertically center the text */
+  justify-content: center;        /* horizontally center the text */
+  width: 60px;                    /* fixed width */
+  height: 15px;                   /* fixed height */
+  line-height: 1;                 /* reset any inherited line-height */
+  text-decoration: none !important;
+  color: #ffffff !important;
+  transition: filter 0.2s ease, box0shadow 0.2 ease;
+}
+
+  /* new box-shadow: x-offset y-offset blur spread color */
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.menu-left li a:hover,
+.menu-right li a:hover {
+  /* keep it white and no underline */
+  color: #ffffff !important;
+  text-decoration: none !important;
+  /* if you want a slight brighten effect: */
+  filter: brightness(1.1);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* allow shadows to “bleed” outside the workspace */
+nav.menu,
+.workspace {
+  overflow: visible !important;
+}
+
+/* ── Top-Menu link/text always white ── */
+nav.menu ul li a,
+nav.menu ul li button {
+  color: #ffffff !important;
+}
+
+/* Workspace */
+.workspace {
+  position: absolute;
+  top: 150px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 150px);
+  background: #0071BC;
+  padding: 40px 20px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 500;
+}
+
+/*────────────────────────────────────────────────────────────────*/
+/*  Page description (all pages)                                */
+/*────────────────────────────────────────────────────────────────*/
+.workspace > .page-title {
+  position: absolute;
+  top: 35px;                  /* half of the 70px header gap */
+  left: 40px;                 /* same indent you’ve been using */
+  margin: 0;
+  color: #fff;
+  font-family: system-ui,-apple-system,BlinkMacSystemFont,
+               "Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size: 1.5rem;          /* match your clients header */
+  line-height: 1;
+  z-index: 1;
+}
+
+/* ── Single-panel (for hq-dash and alike) ── */
+.single-container {
+  position: absolute;
+  top: 70px;      /* your requested 70px from top of blue workspace */
+  right: 20px;    /* 20px inset on the right */
+  bottom: 40px;   /* 40px from bottom */
+  left: 20px;     /* 20px inset on the left */
+  background: #fff;
+  border-radius: 40px;
+  padding: 30px;       /* or whatever padding you use internally */
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.left-box {
+  position: absolute;
+  top: 70px; bottom: 40px;
+  left: 20px;
+  right: 340px; /* 300px (right-box) +20px gap+20px margin */
+  background: #fff;
+  border-radius: 40px;
+  padding: 30px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.right-box {
+  position: absolute;
+  top: 70px; bottom: 40px;
+  right: 20px;
+  width: 300px;
+  background: #fff;
+  border-radius: 40px;
+  box-sizing: border-box;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.page-title {
+  margin: 0 0 20px 40px;
+  color: white;
+  font-size: 20px;
+}
+/* If you wrap your main content in .content-box, it will scroll internally */
+.content-box {
+  flex: 1 1 auto;
+  background: white;
+  border-radius: 40px 40px 0 0;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* (Optional) Admin table basic styling */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.admin-table th,
+.admin-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  color: #333;
+}
+.admin-table th {
+  background: #005f99;
+  color: white;
+}
+
+/* make Reactivate orange */
+#reactivate-btn {
+  background: orange !important;
+}
+
+/*───────────────────────────────────────────────────────────────────*/
+/* scrollbars                                                        */
+/*───────────────────────────────────────────────────────────────────*/
+.left-box::-webkit-scrollbar {
+  width: 8px;
+}
+.left-box::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: rgba(0,0,0,0.2);
+}
+.left-box::-webkit-scrollbar-track {
+  margin: 4px 0;
+}
+
+/* Modal backdrop */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 3000;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal inner box */
+.modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px; /* widen to accommodate two columns */
+  position: relative;
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 8px; right: 8px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ─── Close-wizard button ───────────────────────────────────────────────── */
+.new-user-wizard .workspace > #profile-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #fff;
+  cursor: pointer;
+  z-index: 2002;
+}
+
+/* ensure the page title sits above everything and isn't overlapped */
+.new-user-wizard .workspace > .page-title {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+}
+
+/* push the Create Account button to the bottom of its panel */
+.new-user-wizard .right-box {
+  display: flex;
+  flex-direction: column;
+}
+.new-user-wizard .right-box #create-user-btn {
+  margin-top: auto;
+}
+
+/* (optional) you can tighten up the gear-tab if needed, but since you re-added dashboard.js it should toggle again) */
+
+/* ─── Top-bar info panel ───────────────────────────────────────────── */
+#top-bar-info {
+  position: fixed;
+  top: 160px;       /* just below the logo/top-menu */
+  right: 20px;
+  color: #fff;
+  text-align: right;
+  line-height: 1.2;
+  font-size: 0.9rem;
+  z-index: 2000;
+  pointer-events: none;  /* clicks pass through */
+}

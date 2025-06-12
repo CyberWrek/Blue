@@ -1,0 +1,303 @@
+<!-- /shtml/bluehq/user-profile.shtml -->
+<div id="profile-overlay"></div>
+
+<div id="profile-modal">
+  <button class="close-btn" aria-label="Close">&times;</button>
+  <h2 id="profile-title">User Profile</h2>
+
+  <div id="profile-body">
+    <!-- LEFT COLUMN -->
+    <div class="profile-col-left">
+
+      <!-- Organization -->
+      <section id="section-organization" class="profile-section">
+        <h3>Organization</h3>
+        <div class="org-grid">
+          <!-- Line 1: Name -->
+          <div class="org-row one-col">
+            <div class="org-field">
+              <label for="org-name">Name:</label>
+              <input type="text" id="org-name"/>
+            </div>
+          </div>
+          <!-- Line 2: Street1 & Street2 -->
+          <div class="org-row two-col">
+            <div class="org-field">
+              <label for="org-street1">Street 1:</label>
+              <input type="text" id="org-street1"/>
+            </div>
+            <div class="org-field">
+              <label for="org-street2">Street 2:</label>
+              <input type="text" id="org-street2"/>
+            </div>
+          </div>
+          <!-- Line 3: Unit, City, Prov -->
+          <div class="org-row three-col">
+            <div class="org-field">
+              <label for="org-unit">Unit:</label>
+              <input type="text" id="org-unit"/>
+            </div>
+            <div class="org-field">
+              <label for="org-city">City:</label>
+              <input type="text" id="org-city"/>
+            </div>
+            <div class="org-field">
+              <label for="org-province">Prov:</label>
+              <input type="text" id="org-province"/>
+            </div>
+          </div>
+          <!-- Line 4: Country & Postal -->
+          <div class="org-row two-col">
+            <div class="org-field">
+              <label for="org-country">Country:</label>
+              <input type="text" id="org-country"/>
+            </div>
+            <div class="org-field">
+              <label for="org-postal">Postal:</label>
+              <input type="text" id="org-postal"/>
+            </div>
+          </div>
+          <!-- Line 5: Tel & Email -->
+          <div class="org-row two-col">
+            <div class="org-field">
+              <label for="org-tel">Tel:</label>
+              <input type="text" id="org-tel"/>
+            </div>
+            <div class="org-field">
+              <label for="org-email">Email:</label>
+              <input type="email" id="org-email"/>
+            </div>
+          </div>
+          <!-- Line 6: Account Type & Doors -->
+          <div class="org-row two-col">
+            <div class="org-field">
+              <label for="org-accountType">Account Type:</label>
+              <select id="org-accountType">
+                <option value="00">BlueHQ</option>
+                <option value="01">Home</option>
+                <option value="02">Property Management</option>
+                <option value="03">Builder</option>
+                <option value="04">Property Developer</option>
+                <option value="05">Warranty Provider</option>
+                <option value="06">Trade/Supplier</option>
+              </select>
+            </div>
+            <div class="org-field">
+              <label for="org-doors">Doors:</label>
+              <input type="number" id="org-doors" min="0"/>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Individual -->
+      <section id="section-individual" class="profile-section">
+        <h3>Individual</h3>
+        <div class="ind-grid">
+          <!-- Line 1: First & Last Name -->
+          <div class="ind-row two-col">
+            <div class="ind-field">
+              <label for="ind-firstName">First Name:</label>
+              <input type="text" id="ind-firstName"/>
+            </div>
+            <div class="ind-field">
+              <label for="ind-lastName">Last Name:</label>
+              <input type="text" id="ind-lastName"/>
+            </div>
+          </div>
+          <!-- Line 2: Tel1 + Mobile, Tel2 + Mobile -->
+          <div class="ind-row four-col">
+            <div class="ind-field">
+              <label for="ind-phone1">Tel1:</label>
+              <input type="text" id="ind-phone1"/>
+            </div>
+            <div class="ind-field">
+              <label for="ind-phone1-mobile">
+                <input type="checkbox" id="ind-phone1-mobile"/> Mobile
+              </label>
+            </div>
+            <div class="ind-field">
+              <label for="ind-phone2">Tel2:</label>
+              <input type="text" id="ind-phone2"/>
+            </div>
+            <div class="ind-field">
+              <label for="ind-phone2-mobile">
+                <input type="checkbox" id="ind-phone2-mobile"/> Mobile
+              </label>
+            </div>
+          </div>
+          <!-- Line 3: Email -->
+          <div class="ind-row one-col">
+            <div class="ind-field">
+              <label for="ind-email">Email:</label>
+              <input type="email" id="ind-email"/>
+            </div>
+          </div>
+          <!-- Line 4: Verification -->
+          <div class="ind-row one-col">
+            <div class="ind-field">
+              <label>Verification:</label>
+              <label for="verify-email">
+                <input type="radio" name="verification" id="verify-email"/> Email
+              </label>
+              <label for="verify-tel1">
+                <input type="radio" name="verification" id="verify-tel1"/> Tel1
+              </label>
+              <label for="verify-tel2">
+                <input type="radio" name="verification" id="verify-tel2"/> Tel2
+              </label>
+            </div>
+          </div>
+          <!-- Line 5: Notifications -->
+          <div class="ind-row one-col">
+            <div class="ind-field">
+              <label>Notifications:</label>
+              <label for="notify-email">
+                <input type="checkbox" id="notify-email"/> Email
+              </label>
+              <label for="notify-tel1">
+                <input type="checkbox" id="notify-tel1"/> Tel1
+              </label>
+              <label for="notify-tel2">
+                <input type="checkbox" id="notify-tel2"/> Tel2
+              </label>
+            </div>
+          </div>
+          <!-- Line 6: User Type & Primary -->
+          <div class="ind-row two-col">
+            <div class="ind-field">
+              <label for="ind-userType">User Type:</label>
+              <select id="ind-userType">
+                <option value="01">Owner</option>
+                <option value="02">Director</option>
+                <option value="03">Manager</option>
+                <option value="04">General</option>
+                <option value="01-home">Homeowner</option>
+                <option value="02-home">Agent</option>
+                <option value="03-home">Tenant</option>
+              </select>
+            </div>
+            <div class="ind-field">
+              <label for="ind-primary">Primary:</label>
+              <select id="ind-primary">
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.profile-col-left -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="profile-col-right">
+
+      <!-- Account Details -->
+      <section id="section-account" class="profile-section">
+        <h3>Account Details</h3>
+        <div class="field">
+          <label>Account No:</label>
+          <span id="acct-no"></span>
+        </div>
+        <div class="field">
+          <label>Created:</label>
+          <span id="acct-created"></span>
+        </div>
+        <div class="field">
+          <label>Edited:</label>
+          <span id="acct-edited"></span>
+        </div>
+        <div class="field">
+          <label>Status:</label>
+          <span id="acct-status"></span>
+        </div>
+        <div class="field">
+          <label>Expiry:</label>
+          <span id="acct-expiry"></span>
+        </div>
+        <div class="field">
+          <label>Verified Status:</label>
+          <span id="acct-verificationStatus"></span>
+        </div>
+        <div class="field">
+          <label>Verification Issued:</label>
+          <span id="acct-verificationIssued"></span>
+        </div>
+        <div class="field">
+          <label>(re)Verified On:</label>
+          <span id="acct-reverifiedOn"></span>
+        </div>
+      </section>
+
+      <!-- Subscriptions -->
+      <section id="section-subscriptions" class="profile-section">
+        <h3>Subscriptions</h3>
+        <div class="field">
+          <button id="btn-review-subscriptions" class="btn small">Review Subscriptions</button>
+        </div>
+        <div class="field">
+          <span id="subscriptions-count">There are 0 subscriptions</span>
+        </div>
+      </section>
+
+      <!-- Linked Accounts -->
+      <section id="section-linked" class="profile-section">
+        <h3>Linked Accounts</h3>
+        <div class="field">
+          <button id="btn-review-linked" class="btn small">Review Linked Accts</button>
+        </div>
+        <div class="field">
+          <span id="linked-count">There are 0 linked accounts</span>
+        </div>
+      </section>
+
+      <!-- Sub-Users -->
+      <section id="section-subusers" class="profile-section">
+        <h3>Sub-Users</h3>
+        <div class="field">
+          <button id="btn-review-subusers" class="btn small">Review Sub-Users</button>
+        </div>
+        <div class="field">
+          <span id="subusers-count">There are 0 sub-users</span>
+        </div>
+      </section>
+
+      <!-- Log -->
+      <section id="section-log" class="profile-section">
+        <h3>Log</h3>
+        <div class="field">
+          <button id="btn-review-log" class="btn small">Review Log</button>
+        </div>
+        <div class="field">
+          <span id="log-count">There are 0 log items</span>
+        </div>
+      </section>
+
+    </div><!-- /.profile-col-right -->
+
+  </div><!-- /#profile-body -->
+
+  <!-- Confirmation Dialog (hidden by default) -->
+  <div id="confirm-overlay" class="hidden"></div>
+  <div id="confirm-dialog" class="hidden">
+    <p>Clicking Yes will overwrite the existing record and close this profile.<br>
+       Are you sure you'd like to proceed?</p>
+    <div class="confirm-buttons">
+      <button id="confirm-yes" type="button" class="btn">Yes</button>
+      <button id="confirm-no"  type="button" class="btn">No</button>
+    </div>
+  </div>
+
+  <!-- ACTIONS SIDEBAR -->
+  <aside id="profile-actions" class="profile-section">
+    <button id="btn-suspend-account" class="btn">Suspend Account</button>
+    <button id="btn-suspend-user"    class="btn">Suspend User</button>
+    <button id="btn-delete-account"   class="btn">Delete Account</button>
+    <button id="btn-user-view"        class="btn">User View</button>
+    <button id="btn-password-reset"   class="btn">Password Reset</button>
+    <button id="btn-resend-verif"     class="btn btn--alert">Resend Verification</button>
+    <button id="btn-save-close" type="button" class="btn">Save &amp; Close</button>
+  </aside>
+
+</div><!-- /#profile-modal -->

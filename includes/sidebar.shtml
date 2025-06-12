@@ -1,0 +1,33 @@
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-header">
+    <button id="sidebar-close" class="sidebar-close">&times;</button>
+    <img src="/images/Blue_Logo_2.png" alt="Blue Logo" class="sidebar-logo"/>
+  </div>
+
+  <!-- ROLE SWITCHER -->
+  <div class="role-switcher">
+    <img id="role-avatar"
+         src="/images/default-avatar.png"
+         alt="User Avatar"/>
+
+    <!-- the visible role text -->
+    <span id="role-current" class="role-current"></span>
+
+    <!-- the hidden select -->
+    <select id="role-switcher" class="hidden"></select>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li><a href="/shtml/bluehq/account.shtml">Account</a></li>
+      <li><a href="/shtml/bluehq/settings.shtml">Settings</a></li>
+      <li><a href="/shtml/bluehq/analytics.shtml">Analytics</a></li>
+      <li id="logout-btn"><a href="#">Logout</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<div id="overlay" class="overlay"></div>
+<div id="sidebar-tab">
+  <img src="/images/gear_white.svg" class="gear-icon" alt="Menu"/>
+</div>

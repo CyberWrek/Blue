@@ -1,0 +1,243 @@
+/* ──────────────────────────────────────────────────────────────── */
+/*  LOGIN PAGE STYLES                                             */
+/* ──────────────────────────────────────────────────────────────── */
+
+/* Full-page centered background */
+body.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('../images/white_room_5.png') no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+#safari-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(30,40,50,0.7);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 50000;
+}
+.safari-modal-content {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 8px 8px 4px rgba(0,0,0,0.5);
+  padding: 36px 48px;
+  max-width: 380px;
+  text-align: center;
+  font-size: 18px;
+  color: #2a2a2a;
+  line-height: 1.5;
+}
+
+/* Logo (fades out when tour starts) */
+.login-logo-container {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  transition: opacity 0.75s ease;
+}
+.login-logo-container.fade-out {
+  opacity: 0;
+}
+.login-logo {
+  width: 500px;
+  height: auto;
+}
+
+/* Login form (fades / centered) */
+.login-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  padding: 2rem;
+  background: rgba(255,255,255,0.95);
+  border-radius: 20px;
+  box-shadow: 8px 8px 4px rgba(0,0,0,0.5);
+  font: 1rem Arial, sans-serif !important;
+  box-sizing: border-box;
+  z-index: 10;
+  transition: opacity 0.75s ease;
+}
+.login-container.fade-out {
+  opacity: 0;
+}
+
+/* Form elements */
+.login-container label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+.login-container input {
+  width: 100%;
+  padding: .5rem;
+  margin-top: .25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+}
+.forgot-link {
+  display: block;
+  text-align: right;
+  margin-top: .25rem;
+  font-size: .875rem;
+  color: #0071BC;
+}
+.error-message {
+  color: #c00;
+  font-size: .875rem;
+  margin-top: .5rem;
+}
+
+/* “Remember me” perfectly aligned */
+.remember-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.remember-me input,
+.remember-me label {
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+.remember-me label {
+  font-weight: normal;
+  color: #333;
+  transform: translateY(-1px);
+}
+
+/* Login button & prompt */
+.btn.login-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: .75rem;
+  background: #0071BC;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.signup-prompt {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: .9rem;
+  color: #555;
+}
+.signup-prompt .signup-link {
+  color: #0071BC;
+  font-weight: bold;
+}
+
+/* Hide date/time or top-bar info */
+#date-time-widget,
+.date-time-widget,
+#top-bar-info {
+  display: none !important;
+}
+
+/* ──────────────────────────────────────────────────────────────── */
+/*  OVERLAY & TOUR HOST                                           */
+/* ──────────────────────────────────────────────────────────────── */
+
+/* Full-screen blur overlay (hidden until .show) */
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.75s;
+  z-index: 2000;
+}
+#modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Container for injected tour content (sits above overlay) */
+#tour-host {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2002;
+}
+#tour-host.show {
+  display: block;
+  z-index: 2002;
+}
+
+/* Exit & Skip controls */
+.exit-btn,
+.skip-btn {
+  position: fixed;
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  z-index: 3000;
+}
+.exit-btn {
+  top: 20px;
+  right: 20px;
+  font-size: 48px;
+}
+.skip-btn {
+  bottom: 20px;
+  right: 20px;
+  font-size: 1.25rem;
+}
+.exit-btn.visible,
+.skip-btn.visible {
+  display: block;
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0.3s ease;
+}
+/* “Skip Tour” wiggle */
+@keyframes wiggle-delay {
+  0%,12%,100% { transform: rotate(0); }
+  4%           { transform: rotate(-5deg); }
+  8%           { transform: rotate(5deg); }
+}
+.skip-btn.visible {
+  animation: wiggle-delay 3.3s ease-in-out infinite;
+}
+
+/* ──────────────────────────────────────────────────────────────── */
+/*  CROSS-FADE WHEN “×” IS CLICKED                                */
+/* ──────────────────────────────────────────────────────────────── */
+body.tour-closing * {
+  transition: opacity 0.75s ease !important;
+}
+body.tour-closing #modal-overlay,
+body.tour-closing #tour-host,
+body.tour-closing .exit-btn.visible,
+body.tour-closing .skip-btn.visible {
+  opacity: 0 !important;
+}
+body.tour-closing .login-logo-container,
+body.tour-closing .login-container {
+  transition: opacity 0.75s ease !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}

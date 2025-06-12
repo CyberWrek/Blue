@@ -1,0 +1,77 @@
+  <!-- Sidebar -->
+  <div id="sidebar" class="sidebar">
+    <span id="sidebar-close" class="close-sidebar">✕</span>
+    <img src="images/Blue_Logo_2.png" class="sidebar-logo" alt="Logo"/>
+
+    <!-- Role-Switcher -->
+    <div id="role-switcher" class="role-switcher">
+      <img src="images/avatar_default.png" class="role-avatar" alt="Avatar"/>
+      <span class="role-name">Builder</span>
+      <span class="role-caret">▾</span>
+    </div>
+    <div id="role-dropdown" class="role-dropdown">
+      <div class="role-dropdown-header">
+        <span class="role-dropdown-title">Switch Profile</span>
+        <span id="role-dropdown-close" class="role-dropdown-close">✕</span>
+      </div>
+      <ul class="role-list">
+        <li class="role-item" data-role="homeowner">Homeowner</li>
+        <li class="role-item" data-role="pm">Property Manager</li>
+        <li class="role-item" data-role="warranty">Warranty Provider</li>
+        <li class="role-item" data-role="developer">Property Developer</li>
+        <li class="role-item" data-role="hocare">Homeowner Care</li>
+        <li class="role-item" data-role="builder">Builder</li>
+        <li class="role-item" data-role="trade">Trade/Supplier</li>
+      </ul>
+    </div>
+
+    <ul class="sidebar-content">
+      <li>Account</li>
+      <li>Analytics</li>
+      <li>System Settings</li>
+      <li id="logout-btn">Logout</li>
+    </ul>
+  </div>
+
+
+  <!-- Overlay -->
+  <div id="overlay" class="overlay"></div>
+
+  <!-- Static Logo -->
+  <img src="images/Blue_Logo_1.png" class="static-logo" alt="Blue Logo"/>
+
+  <!-- Help Button -->
+  <button id="help-btn" class="help-btn">?</button>
+
+  <!-- Top Menu -->
+  <nav class="menu">
+    <ul class="menu-left">
+      <li class="active">Dashboard</li>
+      <li>Defect Search</li>
+      <li>Directory</li>
+      <li>Properties</li>
+      <li>Resources</li>
+    </ul>
+    <ul class="menu-right">
+      <li>Inbox</li>
+      <li>Reminders</li>
+      <li>Service Requests</li>
+      <li>Claims</li>
+      <li>Inspections</li>
+    </ul>
+  </nav>
+
+  <!-- Workspace -->
+  <div class="workspace">
+    <h2 class="page-title">Builder Dashboard</h2>
+    <div class="content-box">
+      <!-- Widgets here -->
+    </div>
+  </div>
+
+  <!-- Firebase & App JS -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

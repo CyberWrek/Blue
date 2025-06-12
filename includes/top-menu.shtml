@@ -1,0 +1,6 @@
+<nav class="menu">
+  <ul class="menu-left"></ul>
+  <ul class="menu-right"></ul>
+</nav>
+<script src="/js/menu-config.js"></script>
+<script src="/js/render-menu.js"></script>

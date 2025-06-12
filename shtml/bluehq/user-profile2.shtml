@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>User Profile – BlueHQ</title>
+
+  <!-- Global + dashboard + gear + modal styles -->
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+  <link rel="stylesheet" href="css/sidebar.css"/>
+  <link rel="stylesheet" href="css/hq.css"/>
+  <!-- Profile-specific styles -->
+  <link rel="stylesheet" href="css/bluehq/profile.css"/>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <button id="sidebar-close" class="sidebar-close">✖</button>
+      <img src="images/Blue_Logo_2.png" alt="Blue Logo" class="sidebar-logo"/>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a href="account.shtml">Account</a></li>
+        <li><a href="settings.shtml">System Settings</a></li>
+        <li><a href="analytics.shtml">Analytics</a></li>
+        <li id="logout-btn">Logout</li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Dark overlay -->
+  <div id="overlay" class="overlay"></div>
+
+  <!-- Top logo + menu -->
+  <img src="images/Blue_Logo_1_half.png" class="static-logo" alt="BlueHQ Logo"/>
+  <nav class="menu">
+    <ul class="menu-left"></ul>
+    <ul class="menu-right"></ul>
+  </nav>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+    <button id="profile-close" aria-label="Close profile">&times;</button>
+    <h2 id="profile-title" class="page-title">User Profile</h2>
+
+    <form id="profile-form">
+      <div class="left-box">
+        <div class="profile-grid">
+          <!-- personal info -->
+          <div class="profile-grid__tl">
+            <label for="firstName">First Name
+              <input type="text" id="firstName" name="firstName"/>
+            </label>
+            <label for="lastName">Last Name
+              <input type="text" id="lastName" name="lastName"/>
+            </label>
+            <label for="phone1">Primary Phone
+              <input type="tel" id="phone1" name="phone1"/>
+            </label>
+            <label for="phone2">Secondary Phone
+              <input type="tel" id="phone2" name="phone2"/>
+            </label>
+            <label for="email">Email
+              <input type="email" id="email" name="email"/>
+            </label>
+          </div>
+
+          <!-- Mailing & Service Addresses -->
+          <div class="profile-grid__tr">
+            <fieldset>
+              <legend>Mailing Address</legend>
+              <label for="mailStreet1">Street 1
+                <input type="text" id="mailStreet1"/>
+              </label>
+              <label for="mailStreet2">Street 2
+                <input type="text" id="mailStreet2"/>
+              </label>
+              <label for="mailUnitNum">Unit #
+                <input type="text" id="mailUnitNum"/>
+              </label>
+              <label for="mailCity">City
+                <input type="text" id="mailCity"/>
+              </label>
+              <label for="mailProvince">Province/State
+                <input type="text" id="mailProvince"/>
+              </label>
+              <label for="mailRegion">Region
+                <input type="text" id="mailRegion"/>
+              </label>
+              <label for="mailCountry">Country
+                <select id="mailCountry"></select>
+              </label>
+              <label for="mailPostalCode">Postal Code
+                <input type="text" id="mailPostalCode"/>
+              </label>
+            </fieldset>
+
+            <label class="same-mail-checkbox">
+              <input type="checkbox" id="sameAsMail"/>
+              Service Address same as Mailing
+            </label>
+
+            <fieldset id="serviceAddressFields">
+              <legend>Service Address</legend>
+              <label for="svcStreet1">Street 1
+                <input type="text" id="svcStreet1"/>
+              </label>
+              <label for="svcStreet2">Street 2
+                <input type="text" id="svcStreet2"/>
+              </label>
+              <label for="svcUnitNum">Unit #
+                <input type="text" id="svcUnitNum"/>
+              </label>
+              <label for="svcCity">City
+                <input type="text" id="svcCity"/>
+              </label>
+              <label for="svcProvince">Province/State
+                <input type="text" id="svcProvince"/>
+              </label>
+              <label for="svcRegion">Region
+                <input type="text" id="svcRegion"/>
+              </label>
+              <label for="svcCountry">Country
+                <select id="svcCountry"></select>
+              </label>
+              <label for="svcPostalCode">Postal Code
+                <input type="text" id="svcPostalCode"/>
+              </label>
+            </fieldset>
+          </div>
+
+          <!-- account info -->
+          <div class="profile-grid__br">
+            <label for="accountType">Account Type
+              <input type="text" id="accountType"/>
+            </label>
+            <label for="roles">Roles
+              <input type="text" id="roles" list="roles-list"/>
+            </label>
+            <datalist id="roles-list"></datalist>
+
+            <label>
+              <input type="checkbox" id="primaryUser"/>
+              Primary User
+            </label>
+            <label>
+              <input type="checkbox" id="active"/>
+              Active
+            </label>
+
+            <label for="blueAcct">Blue Account
+              <input type="text" id="blueAcct" disabled/>
+            </label>
+            <label for="defaultAccountUid">Default Account UID
+              <input type="text" id="defaultAccountUid" disabled/>
+            </label>
+
+            <fieldset>
+              <legend>Linked Accounts</legend>
+              <ul id="linkedAccountsList"></ul>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-box">
+        <button type="button" id="suspend-btn"    class="btn">Suspend</button>
+        <button type="button" id="reactivate-btn" class="btn">Reactivate</button>
+        <button type="button" id="delete-btn"     class="btn">Delete</button>
+        <div class="spacer"></div>
+        <button type="submit" class="btn profile-save">Save Changes</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modals -->
+  <div id="close-modal" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to leave without saving?</p>
+      <div class="modal-actions">
+        <button id="close-confirm-yes" class="btn">Yes</button>
+        <button id="close-confirm-no"  class="btn">No</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="action-modal" class="modal">
+    <div class="modal-content">
+      <p id="action-modal-message"></p>
+      <div class="modal-actions">
+        <button id="action-confirm-yes" class="btn">Yes</button>
+        <button id="action-confirm-no"  class="btn">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/hq.js"></script>
+  <script type="module" src="js/profile.js"></script>
+</body>
+</html>

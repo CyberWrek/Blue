@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>New User – BlueHQ</title>
+
+  <!-- Core styles -->
+  <link rel="stylesheet" href="/css/general.css"/>
+  <link rel="stylesheet" href="/css/sidebar.css"/>
+  <link rel="stylesheet" href="/css/dashboard.css"/>
+  <link rel="stylesheet" href="/css/bluehq/profile.css"/>
+
+  <!-- Wizard-specific overrides -->
+  <link rel="stylesheet" href="/css/bluehq/new-user.css"/>
+
+  <!-- Google Maps Places -->
+  <script
+    async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDw9hYxhRztiA4B8Z-QZjfhSxrNzbcPqYs&libraries=places&v=weekly">
+  </script>
+</head>
+<body class="new-user-wizard">
+
+  <!-- SIDEBAR -->
+<!--#include virtual="/includes/sidebar.shtml"-->
+
+  <!-- TOP BAR -->
+  <img src="/images/Blue_Logo_1_half.png" class="static-logo" alt="BlueHQ Logo"/>
+  
+  <!--#include virtual="/includes/hq-top-menu.shtml"-->
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+    <!-- Close‐wizard “×” -->
+  <button id="clients-close" aria-label="Close" onclick="window.location.href='/shtml/bluehq/hq-dash.shtml';">&times;</button>
+
+    <h2 class="page-title">New User</h2>
+
+    <form id="new-user-form" autocomplete="off">
+      <div class="profile-wrapper">
+
+        <!-- LEFT PANEL: STEPS 1–3 -->
+        <div class="left-box">
+          <div class="wizard-container">
+            <div class="wizard-left">
+
+              <!-- STEP 1 -->
+              <section id="step1" class="step">
+                <div class="step-label">
+                  <div class="step-number">1</div>
+                  <div class="step-title">New Account or User?</div>
+                </div>
+                <div class="step-options">
+                  <label>
+                    <input type="radio" name="step1" id="opt-new-account">
+                    New Account
+                  </label>
+                  <label>
+                    <input type="radio" name="step1" id="opt-existing-user">
+                    Existing Account, New Sub-User
+                  </label>
+                </div>
+              </section>
+
+              <!-- STEP 2 -->
+              <section id="step2" class="step hidden">
+                <div class="step-label">
+                  <div class="step-number">2</div>
+                  <div class="step-title">Account Type</div>
+                </div>
+                <div class="step-options">
+                  <label>
+                    <input type="radio" name="step2" id="opt-org" value="organization">
+                    Organization
+                  </label>
+                  <label>
+                    <input type="radio" name="step2" id="opt-ind" value="individual">
+                    Individual
+                  </label>
+                </div>
+              </section>
+
+              <!-- STEP 3 -->
+              <section id="step3" class="step hidden">
+                <div class="step-label">
+                  <div class="step-number">3</div>
+                  <div class="step-title">Organization Type</div>
+                </div>
+                <div class="step-options">
+                  <label><input type="radio" name="step3" value="01"> Builder</label>
+                  <label><input type="radio" name="step3" value="02"> Property Developer</label>
+                  <label><input type="radio" name="step3" value="03"> Property Manager</label>
+                  <label><input type="radio" name="step3" value="04"> Warranty Provider</label>
+                  <label><input type="radio" name="step3" value="05"> Trade/Supplier</label>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- RIGHT PANEL: STEPS 4–5 & SUMMARY -->
+            <div class="wizard-right">
+
+              <!-- STEP 4 -->
+              <section id="step4" class="step hidden">
+                <div class="step-label">
+                  <div class="step-number">4</div>
+                  <div class="step-title">Organization Information</div>
+                </div>
+                <div class="step-fields step4-grid">
+                  <div class="org-name">
+                    <label>Organization Name*
+                      <input type="text" id="orgName" required>
+                    </label>
+                  </div>
+                  <div class="org-address">
+                    <label>Address
+                      <input type="text" id="orgAddress" placeholder="Start typing…">
+                    </label>
+                  </div>
+                  <div class="org-unit">
+                    <label>Unit
+                      <input type="text" id="orgUnit">
+                    </label>
+                  </div>
+                  <div class="org-street1">
+                    <label>Street 1*
+                      <input type="text" id="orgStreet1" required>
+                    </label>
+                  </div>
+                  <div class="org-street2">
+                    <label>Street 2
+                      <input type="text" id="orgStreet2">
+                    </label>
+                  </div>
+                  <div class="org-city">
+                    <label>City*
+                      <input type="text" id="orgCity" required>
+                    </label>
+                  </div>
+                  <div class="org-province">
+                    <label>Province*
+                      <input type="text" id="orgProvince" required>
+                    </label>
+                  </div>
+                  <div class="org-country">
+                    <label>Country*
+                      <input type="text" id="orgCountry" required>
+                    </label>
+                  </div>
+                  <div class="org-postal">
+                    <label>Postal Code*
+                      <input type="text" id="orgPostalCode" required>
+                    </label>
+                  </div>
+                  <div class="org-phone">
+                    <label>Telephone*
+                      <input type="tel" id="orgPhone" required>
+                    </label>
+                  </div>
+                  <div class="org-email">
+                    <label>Email*
+                      <input type="email" id="orgEmail" required>
+                    </label>
+                  </div>
+                </div>
+                <button type="button" id="step4-next" class="btn">Next Step</button>
+              </section>
+
+              <!-- STEP 5 -->
+              <section id="step5" class="step hidden">
+                <div class="step-label">
+                  <div class="step-number">5</div>
+                  <div class="step-title">Primary Contact</div>
+                </div>
+                <div class="step-fields step5-grid">
+                  <div class="contact-first">
+                    <label>First Name*
+                      <input type="text" id="contactFirst" required>
+                    </label>
+                  </div>
+                  <div class="contact-last">
+                    <label>Last Name*
+                      <input type="text" id="contactLast" required>
+                    </label>
+                  </div>
+                  <div class="contact-phone1">
+                    <label>Tel 1*
+                      <input type="tel" id="contactPhone1" required>
+                    </label>
+                  </div>
+                  <div class="contact-phone1mobile">
+                    <label><input type="checkbox" id="contactPhone1Mobile"> Mobile?</label>
+                  </div>
+                  <div class="contact-phone2">
+                    <label>Tel 2
+                      <input type="tel" id="contactPhone2">
+                    </label>
+                  </div>
+                  <div class="contact-phone2mobile">
+                    <label><input type="checkbox" id="contactPhone2Mobile"> Mobile?</label>
+                  </div>
+                  <div class="contact-email-full">
+                    <label>Email*
+                      <input type="email" id="contactEmail" required style="width:100%">
+                    </label>
+                  </div>
+                </div>
+              </section>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- FINAL PANEL: SUMMARY + CREATE -->
+        <div class="right-box">
+          <div class="summary">
+            <h3>Account Details</h3>
+            <p>Blue Acct No: <strong id="summary-acct">—</strong></p>
+            <p>Acct Type:   <strong id="summary-type">—</strong></p>
+            <p>Org Type:    <strong id="summary-subtype">—</strong></p>
+          </div>
+          <button
+            type="submit"
+            id="create-user-btn"
+            class="btn profile-save"
+            disabled
+          >
+            Create Account
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- scripts -->
+  <script type="module" src="/js/firebase.js"></script>
+  <script type="module" src="/js/dashboard.js"></script>
+  <script type="module" src="/js/hq.js"></script>
+  <script type="module" src="/js/new-user.js"></script>
+</body>
+</html>

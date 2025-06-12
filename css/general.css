@@ -1,0 +1,196 @@
+/*───────────────────────────────
+   Global resets & utility styles
+────────────────────────────────*/
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, h1, h2, h3, h4, h5, h6,
+p, ul, ol, figure, blockquote,
+dl, dd {
+  margin: 0; padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  background: #f5f5f5;
+  color: #333;
+  font-size: 14px;            /* ← added “px” */
+}
+
+a {
+  color: #0071BC;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* hidden helper */
+.hidden { display: none !important; }
+/* screen-reader only helper */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* basic button */
+.btn {
+  display: inline-block;
+  padding: 0.6em 1.2em;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #0071BC;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+/* Help Button */
+.help-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: #0071BC;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: bottom 0.1s ease, right 0.1s ease, box-shadow 0.1s ease;
+}
+.help-btn:hover {
+  width: 52px;
+  height: 52px;
+  bottom: 35px;
+  right: 35px;
+  box-shadow: 3px 3px 4px rgba(0,0,0,0.75);
+}
+
+/* ensure our × icons are crisp and light */
+.sidebar-close,
+#profile-close {
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: 24px;
+}
+
+/*───────────────────────────────────────────────────────────────────*/
+/* 3) Google Places Autocomplete Override                            */
+/*───────────────────────────────────────────────────────────────────*/
+.pac-container {
+  width: 600px !important;
+  max-width: none !important;
+}
+
+/*───────────────────────────────────────────────────────────────────*/
+/* 4) Shared Wizard-Step Styles                                      */
+/*───────────────────────────────────────────────────────────────────*/
+.hidden { display: none !important; }
+
+.step-label,
+.step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.step-number,
+.step-circle {
+  width: 40px;
+  height: 40px;
+  background: #0071BC;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.step-title,
+.step-header-text {
+  margin-left: 12px;
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #0071BC;
+}
+
+.step-options,
+.step1-options {
+  margin-top: 10px;
+  margin-left: 50px;
+}
+.step-options label,
+.step1-options label {
+  display: block;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* ── Top-right user info widget ─────────────────────────────────── */
+.user-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #ffffff;
+  text-align: right;
+  line-height: 1.3;
+  font-size: 0.875rem;
+  pointer-events: none;
+  z-index:1500;
+}
+#user-info div + div {
+  margin-top: 4px;
+}
+
+/*────────────────────────────────────────────────────────────────────────
+   Workspace “close” button
+────────────────────────────────────────────────────────────────────────*/
+.workspace > button[id$="-close"] {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #fff;
+  cursor: pointer;
+  z-index: 2002;
+}
+.workspace > button.close-btn,
+.workspace > button#profile-close,
+.workspace > button[id$="-close"] {
+  margin-left: 0;
+}
+.workspace > button[id$="-close"] + * {
+  margin-right: 50px;
+}
+
+/*────────────────────────────────────────────────────────────────────────
+   NEW: Force all form controls to inherit their container’s font
+────────────────────────────────────────────────────────────────────────*/
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+  font-size:   inherit;
+  line-height: inherit;
+}

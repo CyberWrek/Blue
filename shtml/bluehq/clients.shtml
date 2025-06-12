@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Clients – BlueHQ</title>
+
+  <!-- shared includes -->
+  <!--#include virtual="/includes/header.shtml" -->
+  <!--#include virtual="/includes/sidebar.shtml" -->
+  <!--#include virtual="/includes/static-logo.shtml" -->
+  <!--#include virtual="/includes/hq-top-menu.shtml" -->
+
+  <!-- core styles -->
+  <link rel="stylesheet" href="/css/dashboard.css"/>
+
+  <!-- page-specific -->
+  <link rel="stylesheet" href="/css/bluehq/user-profile.css"/>
+  <link rel="stylesheet" href="/css/bluehq/clients.css"/>
+</head>
+<body class="hq-dashboard" data-user-type="bluehq">
+  <div class="workspace">
+    <button id="profile-close" aria-label="Close"
+            onclick="window.location.href='/shtml/bluehq/hq-dash.shtml';">
+      &times;
+    </button>
+
+    <div class="clients-header">
+      <h2>Clients</h2>
+      <div class="clients-controls">
+        <label for="search-input">Search
+          <input type="text" id="search-input" placeholder="Start typing…">
+        </label>
+        <button id="filter-btn" class="btn small">Filter</button>
+        <button id="print-btn"  class="btn small">Print Report</button>
+      </div>
+    </div>
+
+    <div class="single-container">
+      <table id="clients-table" class="table">
+        <colgroup>
+          <col style="width:100px"><!-- Name -->
+          <col><!-- Address -->
+          <col style="width:140px"><!-- City -->
+          <col style="width:40px"><!-- Prov -->
+          <col style="width:110px"><!-- First Name -->
+          <col style="width:110px"><!-- Last Name -->
+          <col style="width:100px"><!-- Phone1 -->
+          <col style="width:100px"><!-- Phone2 -->
+          <col style="width:160px"><!-- Email -->
+          <col style="width:26px"><!-- Primary -->
+          <col style="width:26px"><!-- Doors -->
+          <col style="width:46px"><!-- Acct -->
+          <col style="width:46px"><!-- User -->
+          <col style="width:160px"><!-- Blue Acct No -->
+          <col style="width:26px"><!-- Active -->
+          <col style="width:26px"><!-- Linked -->
+          <col style="width:26px"><!-- Paid -->
+          <col style="width:80px"><!-- Expiry -->
+        </colgroup>
+        <thead>
+          <tr class="group-header">
+            <th colspan="4">Organization</th>
+            <th colspan="5">Individual</th>
+            <th rowspan="2" class="small-header vertical">Primary</th>
+            <th rowspan="2" class="small-header vertical">Doors</th>
+            <th colspan="2">Type</th>
+            <th><!-- Blue Acct No top placeholder --></th>
+            <th rowspan="2" class="small-header vertical">Active</th>
+            <th rowspan="2" class="small-header vertical">Linked</th>
+            <th rowspan="2" class="small-header vertical">Paid</th>
+            <th><!-- Expiry top placeholder --></th>
+          </tr>
+          <tr class="column-header">
+            <th>Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Prov</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone 1</th>
+            <th>Phone 2</th>
+            <th>Email</th>
+            <th>Acct</th>
+            <th>User</th>
+            <th>Blue Acct No</th>
+            <th>Expiry</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- rows injected by js/clients.js -->
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /.workspace -->
+
+  <!-- pop-up snippet (must live inside <body>) -->
+  <!--#include virtual="/shtml/bluehq/user-profile.shtml" -->
+
+  <!-- scripts -->
+  <script type="module" src="/js/firebase.js"></script>
+  <script type="module" src="/js/dashboard.js"></script>
+  <script type="module" src="/js/clients.js"></script>
+  <script type="module" src="/js/user-profile.js"></script>
+</body>
+</html>
