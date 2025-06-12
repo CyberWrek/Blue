@@ -11,6 +11,7 @@
 
 
   <style>
+    /* Your existing inline styles remain */
     body.login-page {
       opacity: 0;
       transition: opacity .75s ease-in-out;
@@ -54,7 +55,7 @@
       transition: opacity 0.75s cubic-bezier(.65,.05,.36,1);
     }
     #tour-iframe {
-      display: none;
+      display: none; /* Keep iframe hidden initially */
       position: fixed;
       inset: 0;
       width: 100vw;
@@ -83,61 +84,62 @@
 </head>
 <body class="login-page">
     <div id="safari-modal" style="display:none;">
-  <div class="safari-modal-content">
-    <h2>Unsupported Browser Detected</h2>
-    <p>
-      We’re sorry, but <b>Apple Safari</b> is not fully supported on this site.<br>
-      For the best experience, please use <b>Google Chrome</b>, <b>Mozilla Firefox</b>, or <b>Microsoft Edge</b>.
-    </p>
-  </div>
-</div>
-<script>
-  function isSafari() {
-    // Returns true for Safari (not Chrome/Edge/Firefox)
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-  }
-  if (isSafari()) {
-    var modal = document.getElementById("safari-modal");
-    if (modal) modal.style.display = "flex";
-    document.body.style.overflow = "hidden";
-  }
-</script>
-  <div id="modal-overlay"></div>
-  <div class="login-logo-container">
-    <img src="images/Blue_Logo_1.png" alt="BlueHQ Logo" class="login-logo"/>
-  </div>
-
-  <div class="login-container">
-    <form id="login-form" autocomplete="off" method="post" onsubmit="return false;">
-      <input type="text" id="email" name="email" placeholder="Username" required/>
-      <a href="forgot-username.shtml" class="forgot-link">I forgot my username</a>
-      <input type="password" id="password" name="password" placeholder="Password" required/>
-      <a href="forgot-password.shtml" class="forgot-link">I forgot my password</a>
-      <div id="error-message" class="error-message"></div>
-      <div class="remember-me">
-        <input type="checkbox" id="remember-me" name="rememberMe"/>
-        <label for="remember-me">Remember me</label>
+      <div class="safari-modal-content">
+        <h2>Unsupported Browser Detected</h2>
+        <p>
+          We’re sorry, but <b>Apple Safari</b> is not fully supported on this site.<br>
+          For the best experience, please use <b>Google Chrome</b>, <b>Mozilla Firefox</b>, or <b>Microsoft Edge</b>.
+        </p>
       </div>
-      <button type="submit" class="btn login-btn">Log In</button>
-      <p class="signup-prompt">
-        No Account? Thinking of signing up?<br/>
-        <a href="javascript:void(0);" class="signup-link">Click Here</a>
-      </p>
-    </form>
-  </div>
+    </div>
+    <script>
+      function isSafari() {
+        // Returns true for Safari (not Chrome/Edge/Firefox)
+        return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      }
+      if (isSafari()) {
+        var modal = document.getElementById("safari-modal");
+        if (modal) modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+      }
+    </script>
+    <div id="modal-overlay"></div>
+    <div class="login-logo-container">
+      <img src="images/Blue_Logo_1.png" alt="BlueHQ Logo" class="login-logo"/>
+    </div>
 
-  <iframe id="tour-iframe" src="" title="Blue Sign Up Tour" tabindex="-1" aria-hidden="true"></iframe>
+    <div class="login-container">
+      <form id="login-form" autocomplete="off" method="post" onsubmit="return false;">
+        <input type="text" id="email" name="email" placeholder="Username" required/>
+        <a href="forgot-username.shtml" class="forgot-link">I forgot my username</a>
+        <input type="password" id="password" name="password" placeholder="Password" required/>
+        <a href="forgot-password.shtml" class="forgot-link">I forgot my password</a>
+        <div id="error-message" class="error-message"></div>
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me" name="rememberMe"/>
+          <label for="remember-me">Remember me</label>
+        </div>
+        <button type="submit" class="btn login-btn">Log In</button>
+        <p class="signup-prompt">
+          No Account? Thinking of signing up?<br/>
+          <a href="javascript:void(0);" class="signup-link">Click Here</a>
+        </p>
+      </form>
+    </div>
 
-<script src="js/jquery-3.7.1.min.js"></script> <script src="js/bootstrap.bundle.min.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <iframe id="tour-iframe" src="" title="Blue Sign Up Tour" tabindex="-1" aria-hidden="true"></iframe>
 
-<script src="js/firebase.js"></script>
-<script src="js/index.js"></script>
-<script>
-    window.addEventListener('load', () => {
-      document.body.classList.add('fade-in');
-    });
-  </script>
-  </body>
+    <script src="js/jquery-3.7.1.min.js"></script> <script src="js/bootstrap.bundle.min.js"></script> <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script src="js/firebase.js"></script>
+    <script src="js/index.js"></script>
+
+    <script>
+      window.addEventListener('load', () => {
+        document.body.classList.add('fade-in');
+      });
+    </script>
+    </body>
 </html>
