@@ -1042,6 +1042,50 @@ window.initSignupForm = function () {
     }
   });
 
+// ---- 7.7.1: Real-Time Username Duplicate Checker ----
+
+if (username) username.addEventListener('input', async function () {
+  const userVal = username.value.trim();
+  // Only check if 5+ chars to avoid spamming backend
+  if (userVal.length < 5) return;
+
+  // Prevent double modals by not firing if one is already open
+  const existingModal = document.getElementById('globalErrorModal-username');
+  if (existingModal) return;
+
+  // Firestore duplicate check
+  let isDup = false;
+  try {
+    isDup = await checkUsername(userVal);
+  } catch (err) {
+    // Optional: you can log or handle errors here
+    return;
+  }
+  if (!isDup) return;
+
+  // Suggest alternatives
+  let suggestions = [];
+  try {
+    suggestions = await suggestUsernames(userVal);
+  } catch (err) { suggestions = []; }
+
+  showErrorModal({
+    type: "username",
+    title: "Whoops!",
+    messages: ["The username is already taken. Please select one of the alternate options below."],
+    suggestions,
+    onAcceptSuggestion: (selectedUsername) => {
+      username.value = selectedUsername;
+      username.focus();
+    },
+    onClose: () => {
+      username.value = "";
+      username.focus();
+    }
+  });
+});
+
+  
   // ---- 7.8: Notification Checkbox Logic ----
 
   function enforceNotificationCheckboxes() {
