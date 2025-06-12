@@ -134,7 +134,7 @@
 
 <script src="js/firebase.js"></script>
 <script src="js/index.js"></script>
-<script src="js/tour.js"></script> <script>
+<script>
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
     });
