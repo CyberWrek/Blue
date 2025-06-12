@@ -32,19 +32,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // You can replace this with actual Firebase authentication
-            // Example Firebase Auth (commented out as in your original file)
+            // You can replace this with actual Firebase authentication (commented out as in your original file)
             /*
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Signed in
                     const user = userCredential.user;
                     errorMessage.style.display = 'none';
                     alert('Logged in as: ' + user.email);
-                    // Redirect or proceed to next page
                 })
                 .catch((error) => {
-                    const errorCode = error.code;
                     const message = error.message;
                     errorMessage.textContent = 'Login failed: ' + message;
                     errorMessage.style.display = 'block';
@@ -55,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (email === 'test@example.com' && password === 'password123') {
                 errorMessage.style.display = 'none';
                 alert('Login successful!');
-                // You would typically redirect here
             } else {
                 errorMessage.textContent = 'Invalid username or password.';
                 errorMessage.style.display = 'block';
@@ -67,21 +62,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rememberMeCheckbox) {
         if (localStorage.getItem('rememberMe') === 'true') {
             rememberMeCheckbox.checked = true;
-            // You might want to auto-fill username if remembered
         }
-
         rememberMeCheckbox.addEventListener('change', function() {
             localStorage.setItem('rememberMe', this.checked);
         });
     }
 
-    // === "CLICK HERE" LINK TO OPEN TOUR (UPDATED FOR IFRAME) ===
-    // This part now directly controls the iframe, replacing the call to injectSignupForm()
-    const signupLink = document.querySelector('.signup-link');
+    // === ELEMENTS FOR TOUR ANIMATIONS ===
     const tourIframe = document.getElementById('tour-iframe');
     const loginLogoContainer = document.querySelector('.login-logo-container');
     const loginContainer = document.querySelector('.login-container');
-    const modalOverlay = document.getElementById('modal-overlay'); // This element is in index.shtml
+    const modalOverlay = document.getElementById('modal-overlay');
+
+    // === "CLICK HERE" LINK TO OPEN TOUR (UPDATED FOR IFRAME) ===
+    const signupLink = document.querySelector('.signup-link');
 
     if (signupLink && tourIframe && loginLogoContainer && loginContainer && modalOverlay) {
         signupLink.addEventListener('click', function(event) {
@@ -99,4 +93,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 750); // Match CSS transition duration from index.shtml style block
         });
     }
+
+    // === FUNCTION TO CLOSE THE TOUR IFRAME AND RESTORE LANDING PAGE (NEW) ===
+    // This function is made globally accessible so it can be called from within the iframe's tour.js
+    window.closeTourIframe = function() {
+        if (tourIframe && loginLogoContainer && loginContainer && modalOverlay) {
+            // Hide iframe
+            tourIframe.classList.remove('show');
+            tourIframe.src = ''; // Clear src to stop video/audio if any, and reset iframe state
+
+            // Fade in login content and hide overlay
+            loginLogoContainer.classList.remove('fade-out');
+            loginContainer.classList.remove('fade-out');
+            modalOverlay.classList.remove('show');
+
+            // Reset scroll if needed (assuming user might have scrolled in the iframe)
+            document.body.style.overflow = ''; // Re-enable scrolling on main page if it was disabled
+        }
+    };
 });
