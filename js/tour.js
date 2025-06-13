@@ -1085,7 +1085,7 @@ if (username) username.addEventListener('input', async function () {
   });
 });
 
-  
+
   // ---- 7.8: Notification Checkbox Logic ----
 
   function enforceNotificationCheckboxes() {
