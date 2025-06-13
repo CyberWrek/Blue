@@ -652,170 +652,163 @@ window.initSignupForm = function () {
     }
   }
 
-  // ---- 7.2a: Stacked Modal Positioning & Animation ----
+// ---- 7.2a: Stacked Modal Positioning & Animation ----
+function stackErrorModals(initial = true) {
+  const emailModal = document.getElementById('globalErrorModal-email');
+  const usernameModal = document.getElementById('globalErrorModal-username');
+  const GAP = 20;
+  const vh = window.innerHeight;
+  const fallbackHeight = 180;
 
-  function stackErrorModals(initial = true) {
-    const emailModal = document.getElementById('globalErrorModal-email');
-    const usernameModal = document.getElementById('globalErrorModal-username');
-    const GAP = 20;
-    const vh = window.innerHeight;
-    const fallbackHeight = 180;
-
-    function setModal(modal, topPx, z) {
-      if (!modal) return;
-      modal.style.left = "50%";
-      modal.style.top = topPx + "px";
-      modal.style.transform = "translateX(-50%)";
-      modal.style.zIndex = z;
-      modal.style.display = "flex";
-    }
-
-    [emailModal, usernameModal].forEach(m => {
-      if (m) m.style.transition = initial ? 'none' : 'top 0.7s cubic-bezier(.7,0,.23,1)';
-    });
-
-    if (emailModal && usernameModal) {
-      const mh1 = emailModal.offsetHeight || fallbackHeight;
-      const mh2 = usernameModal.offsetHeight || fallbackHeight;
-      const total = mh1 + GAP + mh2;
-      const topStart = Math.round((vh - total) / 2);
-
-      setModal(emailModal, topStart, 10011);
-      setModal(usernameModal, topStart + mh1 + GAP, 10010);
-    } else if (emailModal) {
-      const mh = emailModal.offsetHeight || fallbackHeight;
-      const topCenter = Math.round((vh - mh) / 2);
-      setModal(emailModal, topCenter, 10010);
-    } else if (usernameModal) {
-      const mh = usernameModal.offsetHeight || fallbackHeight;
-      const topCenter = Math.round((vh - mh) / 2);
-      setModal(usernameModal, topCenter, 10010);
-    }
-
-    if (initial) {
-      setTimeout(() => {
-        [emailModal, usernameModal].forEach(m => {
-          if (m) m.style.transition = 'top 0.7s cubic-bezier(.7,0,.23,1)';
-        });
-      }, 35);
-    }
+  function setModal(modal, topPx, z) {
+    if (!modal) return;
+    modal.style.left = "50%";
+    modal.style.top = topPx + "px";
+    modal.style.transform = "translateX(-50%)";
+    modal.style.zIndex = z;
+    modal.style.display = "flex";
   }
 
-  // ---- 7.2b: Stacked Modal API (Unified) ----
+  [emailModal, usernameModal].forEach(m => {
+    if (m) m.style.transition = initial ? 'none' : 'top 0.7s cubic-bezier(.7,0,.23,1)';
+  });
 
-  function showErrorModal(opts = {}) {
-    // opts.type: "email" | "username" | "default"
-    const {
-      type = "default",
-      title = "Whoops!",
-      messages = [],
-      suggestions = null,
-      onAcceptSuggestion = null,
-      onClose = null,
-      lockOverlay = true // Only close via X or Accept
-    } = opts;
+  if (emailModal && usernameModal) {
+    const mh1 = emailModal.offsetHeight || fallbackHeight;
+    const mh2 = usernameModal.offsetHeight || fallbackHeight;
+    const total = mh1 + GAP + mh2;
+    const topStart = Math.round((vh - total) / 2);
 
-    ensureErrorOverlay();
+    setModal(emailModal, topStart, 10011);
+    setModal(usernameModal, topStart + mh1 + GAP, 10010);
+  } else if (emailModal) {
+    const mh = emailModal.offsetHeight || fallbackHeight;
+    const topCenter = Math.round((vh - mh) / 2);
+    setModal(emailModal, topCenter, 10010);
+  } else if (usernameModal) {
+    const mh = usernameModal.offsetHeight || fallbackHeight;
+    const topCenter = Math.round((vh - mh) / 2);
+    setModal(usernameModal, topCenter, 10010);
+  }
 
-    // Modal ID per type
-    const modalId = type === "email" ? "globalErrorModal-email"
-                  : type === "username" ? "globalErrorModal-username"
-                  : "globalErrorModal";
-    // Remove if already exists
-    const oldModal = document.getElementById(modalId);
-    if (oldModal) oldModal.remove();
-
-    // Remove both others if default
-    if (type === "default") {
-      ["globalErrorModal-email", "globalErrorModal-username"].forEach(id => {
-        const other = document.getElementById(id);
-        if (other) other.remove();
+  if (initial) {
+    setTimeout(() => {
+      [emailModal, usernameModal].forEach(m => {
+        if (m) m.style.transition = 'top 0.7s cubic-bezier(.7,0,.23,1)';
       });
-    }
+    }, 35);
+  }
+}
 
-    const modal = document.createElement('div');
-    modal.id = modalId;
-    modal.className = 'modal-modal active stacked-error-modal ' + (type ? `modal-${type}` : '');
+// ---- 7.2b: Stacked Modal API (Unified) ----
+function showErrorModal(opts = {}) {
+  const {
+    type = "default",
+    title = "Whoops!",
+    messages = [],
+    suggestions = null,
+    onAcceptSuggestion = null,
+    onClose = null,
+    lockOverlay = true
+  } = opts;
 
-    let suggestionHtml = '';
-    if (type === "username" && Array.isArray(suggestions) && suggestions.length) {
-      suggestionHtml = `
-        <form id="usernameSuggestionForm">
-          ${suggestions.map((s, i) => `
-            <label style="display:flex;align-items:center;margin-bottom:7px;">
-              <input type="radio" name="usernameSuggestion" value="${s}" ${i === 0 ? "checked" : ""}>
-              <span>${s}</span>
-            </label>
-          `).join("")}
-        </form>
-        <button id="acceptUsernameBtn" class="btn" type="button" style="margin-top:12px;">Accept Username</button>
-      `;
-    }
+  ensureErrorOverlay();
 
-    modal.innerHTML = `
-      <div class="modal-content" style="background: white; padding: 24px 32px 32px 32px; border-radius: 14px; min-width:340px; max-width: 430px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); position:relative;">
-        <button id="closeGlobalError" class="modal-close" aria-label="Close" style="position:absolute;top:16px;right:16px;font-size:1.5rem;">&times;</button>
-        <div class="modal-title" style="font-size:1.3rem;font-weight:600;margin-bottom:12px;">${title}</div>
-        <ul id="globalErrorList" style="margin:0 0 18px 0; padding-left:20px;">
-          ${messages.map(msg => `<li style="color:#b12; margin-bottom:8px;">${msg}</li>`).join('')}
-        </ul>
-        ${suggestionHtml}
-      </div>
+  // Modal ID per type
+  const modalId = type === "email" ? "globalErrorModal-email"
+                : type === "username" ? "globalErrorModal-username"
+                : "globalErrorModal";
+  // Remove if already exists
+  const oldModal = document.getElementById(modalId);
+  if (oldModal) oldModal.remove();
+
+  // Remove both others if default
+  if (type === "default") {
+    ["globalErrorModal-email", "globalErrorModal-username"].forEach(id => {
+      const other = document.getElementById(id);
+      if (other) other.remove();
+    });
+  }
+
+  const modal = document.createElement('div');
+  modal.id = modalId;
+  modal.className = 'modal-modal active stacked-error-modal ' + (type ? `modal-${type}` : '');
+
+  let suggestionHtml = '';
+  if (type === "username" && Array.isArray(suggestions) && suggestions.length) {
+    suggestionHtml = `
+      <form id="usernameSuggestionForm">
+        ${suggestions.map((s, i) => `
+          <label style="display:flex;align-items:center;margin-bottom:7px;">
+            <input type="radio" name="usernameSuggestion" value="${s}" ${i === 0 ? "checked" : ""}>
+            <span>${s}</span>
+          </label>
+        `).join("")}
+      </form>
+      <button id="acceptUsernameBtn" class="btn" type="button" style="margin-top:12px;">Accept Username</button>
     `;
+  }
 
-    // --- No transition on open; enable after 1 frame ---
-    modal.style.transition = "none";
-    document.body.appendChild(modal);
-    stackErrorModals(true);
+  modal.innerHTML = `
+    <div class="modal-content" style="background: white; padding: 24px 32px 32px 32px; border-radius: 14px; min-width:340px; max-width: 430px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); position:relative;">
+      <button id="closeGlobalError" class="modal-close" aria-label="Close" style="position:absolute;top:16px;right:16px;font-size:1.5rem;">&times;</button>
+      <div class="modal-title" style="font-size:1.3rem;font-weight:600;margin-bottom:12px;">${title}</div>
+      <ul id="globalErrorList" style="margin:0 0 18px 0; padding-left:20px;">
+        ${messages.map(msg => `<li style="color:#b12; margin-bottom:8px;">${msg}</li>`).join('')}
+      </ul>
+      ${suggestionHtml}
+    </div>
+  `;
 
-    requestAnimationFrame(() => {
-      modal.style.transition = "top 0.7s cubic-bezier(.7,0,.23,1)";
-    });
+  modal.style.transition = "none";
+  document.body.appendChild(modal);
+  stackErrorModals(true);
 
-    // Close via X only (or Accept on username modal)
-    function finishClose(accepted) {
-      modal.remove();
-      if (typeof onClose === "function") onClose(accepted);
-      setTimeout(() => {
-        stackErrorModals(false);
-        if (
-          !document.getElementById('globalErrorModal-email') &&
-          !document.getElementById('globalErrorModal-username')
-        ) {
-          removeErrorOverlay();
-        }
-      }, 10);
-    }
-    modal.querySelector('#closeGlobalError').onclick = function () {
-      finishClose(false);
-    };
-    modal.addEventListener('keydown', function (e) {
-      if (e.key === "Escape") finishClose(false);
-    });
-    // Overlay never closes modal
-    if (!lockOverlay) {
-      modal.addEventListener('mousedown', function (e) {
-        if (e.target === modal) finishClose(false);
-      });
-    }
-    // Username suggestion accept
-    if (type === "username" && modal.querySelector('#acceptUsernameBtn')) {
-      modal.querySelector('#acceptUsernameBtn').onclick = function () {
-        const chosen = modal.querySelector('input[name="usernameSuggestion"]:checked');
-        if (chosen && typeof onAcceptSuggestion === "function") {
-          onAcceptSuggestion(chosen.value, true);
-        }
-        finishClose(true);
-      };
-    }
-    // Esc key closes
-    document.addEventListener('keydown', function handler(e) {
-      if (e.key === "Escape") {
-        finishClose(false);
-        document.removeEventListener('keydown', handler);
+  requestAnimationFrame(() => {
+    modal.style.transition = "top 0.7s cubic-bezier(.7,0,.23,1)";
+  });
+
+  // Close via X or Accept on username modal
+  function finishClose(accepted) {
+    modal.remove();
+    if (typeof onClose === "function") onClose(accepted);
+    setTimeout(() => {
+      stackErrorModals(false);
+      if (
+        !document.getElementById('globalErrorModal-email') &&
+        !document.getElementById('globalErrorModal-username')
+      ) {
+        removeErrorOverlay();
       }
+    }, 10);
+  }
+  modal.querySelector('#closeGlobalError').onclick = function () {
+    finishClose(false);
+  };
+  modal.addEventListener('keydown', function (e) {
+    if (e.key === "Escape") finishClose(false);
+  });
+  if (!lockOverlay) {
+    modal.addEventListener('mousedown', function (e) {
+      if (e.target === modal) finishClose(false);
     });
   }
+  if (type === "username" && modal.querySelector('#acceptUsernameBtn')) {
+    modal.querySelector('#acceptUsernameBtn').onclick = function () {
+      const chosen = modal.querySelector('input[name="usernameSuggestion"]:checked');
+      if (chosen && typeof onAcceptSuggestion === "function") {
+        onAcceptSuggestion(chosen.value, true);
+      }
+      finishClose(true);
+    };
+  }
+  document.addEventListener('keydown', function handler(e) {
+    if (e.key === "Escape") {
+      finishClose(false);
+      document.removeEventListener('keydown', handler);
+    }
+  });
+}
 
   // ---- 7.3: Field/DOM Selectors ----
 
@@ -960,35 +953,144 @@ window.initSignupForm = function () {
     return arr.slice(0, 3);
   }
 
-  // ---- 7.6: Real-Time Duplicate Checks (input events) ----
+// ---- 7.6: Real-Time Duplicate Checks (input events) ----
 
-  // Modal stack manager for email/username in real time
-  async function handleEmailInput() {
+let dupeTimer = null;
+
+async function showStackedEmailUsernameModals(emailVal, userVal, suggestions) {
+  ensureErrorOverlay();
+
+  // Remove any previous modals
+  ["globalErrorModal-email", "globalErrorModal-username"].forEach(id => {
+    const m = document.getElementById(id);
+    if (m) m.remove();
+  });
+
+  // Create both modals first (hidden)
+  const emailModal = document.createElement('div');
+  emailModal.id = "globalErrorModal-email";
+  emailModal.className = "modal-modal active stacked-error-modal modal-email";
+  emailModal.style.visibility = "hidden";
+  emailModal.innerHTML = `
+    <div class="modal-content" style="background: white; padding: 24px 32px 32px 32px; border-radius: 14px; min-width:340px; max-width: 430px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); position:relative;">
+      <button id="closeGlobalErrorEmail" class="modal-close" aria-label="Close" style="position:absolute;top:16px;right:16px;font-size:1.5rem;">&times;</button>
+      <div class="modal-title" style="font-size:1.3rem;font-weight:600;margin-bottom:12px;">Whoops!</div>
+      <ul id="globalErrorList" style="margin:0 0 18px 0; padding-left:20px;">
+        <li style="color:#b12; margin-bottom:8px;">This email address is already registered to another account. Please use another email address or log into your existing account.</li>
+      </ul>
+    </div>
+  `;
+  document.body.appendChild(emailModal);
+
+  const usernameModal = document.createElement('div');
+  usernameModal.id = "globalErrorModal-username";
+  usernameModal.className = "modal-modal active stacked-error-modal modal-username";
+  usernameModal.style.visibility = "hidden";
+  usernameModal.innerHTML = `
+    <div class="modal-content" style="background: white; padding: 24px 32px 32px 32px; border-radius: 14px; min-width:340px; max-width: 430px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); position:relative;">
+      <button id="closeGlobalErrorUsername" class="modal-close" aria-label="Close" style="position:absolute;top:16px;right:16px;font-size:1.5rem;">&times;</button>
+      <div class="modal-title" style="font-size:1.3rem;font-weight:600;margin-bottom:12px;">Whoops!</div>
+      <ul id="globalErrorList" style="margin:0 0 18px 0; padding-left:20px;">
+        <li style="color:#b12; margin-bottom:8px;">The username is already taken. Please select one of the alternate options below.</li>
+      </ul>
+      <form id="usernameSuggestionForm">
+        ${suggestions.map((s, i) => `
+          <label style="display:flex;align-items:center;margin-bottom:7px;">
+            <input type="radio" name="usernameSuggestion" value="${s}" ${i === 0 ? "checked" : ""}>
+            <span>${s}</span>
+          </label>
+        `).join("")}
+      </form>
+      <button id="acceptUsernameBtn" class="btn" type="button" style="margin-top:12px;">Accept Username</button>
+    </div>
+  `;
+  document.body.appendChild(usernameModal);
+
+  // Now both modals are in the DOM, stack them!
+  stackErrorModals(true);
+  emailModal.style.visibility = "visible";
+  usernameModal.style.visibility = "visible";
+
+  // CLOSE handlers
+  document.getElementById("closeGlobalErrorEmail").onclick = function () {
+    emailModal.remove();
+    email.value = "";
+    email.focus();
+    setTimeout(() => {
+      stackErrorModals(false);
+      if (!document.getElementById('globalErrorModal-username')) removeErrorOverlay();
+    }, 10);
+  };
+  document.getElementById("closeGlobalErrorUsername").onclick = function () {
+    usernameModal.remove();
+    if (!username.value || suggestions.indexOf(username.value) === -1) {
+      username.value = "";
+    }
+    username.focus();
+    setTimeout(() => {
+      stackErrorModals(false);
+      if (!document.getElementById('globalErrorModal-email')) removeErrorOverlay();
+    }, 10);
+  };
+  // Accept username suggestion
+  document.getElementById("acceptUsernameBtn").onclick = function () {
+    const chosen = usernameModal.querySelector('input[name="usernameSuggestion"]:checked');
+    if (chosen) {
+      username.value = chosen.value;
+      username.focus();
+    }
+    usernameModal.remove();
+    setTimeout(() => {
+      stackErrorModals(false);
+      if (!document.getElementById('globalErrorModal-email')) removeErrorOverlay();
+    }, 10);
+  };
+}
+
+// Attach debounced check to both fields, **WITHOUT disrupting other input listeners**
+if (email && username) {
+  const debounce = (fn, wait) => {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  };
+
+  const checkDupes = debounce(async () => {
     const emailVal = email.value.trim();
-    if (emailVal.length >= 6 && await checkEmail(emailVal)) {
-      // Remove any existing modal to avoid stack overflow
-      if (document.getElementById('globalErrorModal-email')) return;
+    const userVal = username.value.trim();
+    let emailDup = false, userDup = false, suggestions = [];
+    if (emailVal.length >= 6) emailDup = await checkEmail(emailVal);
+    if (userVal.length >= 5) userDup = await checkUsername(userVal);
+    if (userDup) suggestions = await suggestUsernames(userVal);
+
+    if (emailDup && userDup) {
+      await showStackedEmailUsernameModals(emailVal, userVal, suggestions);
+      return;
+    }
+    if (emailDup) {
       showErrorModal({
         type: "email",
         title: "Whoops!",
-        messages: ["This email address is already registered to another account. Please use another email address or log into your existing account."],
+        messages: [
+          "This email address is already registered to another account. Please use another email address or log into your existing account."
+        ],
         lockOverlay: true,
         onClose: () => {
           email.value = "";
           email.focus();
         }
       });
+      return;
     }
-  }
-  async function handleUsernameInput() {
-    const userVal = username.value.trim();
-    if (userVal.length >= 5 && await checkUsername(userVal)) {
-      if (document.getElementById('globalErrorModal-username')) return;
-      let suggestions = await suggestUsernames(userVal);
+    if (userDup) {
       showErrorModal({
         type: "username",
         title: "Whoops!",
-        messages: ["The username is already taken. Please select one of the alternate options below."],
+        messages: [
+          "The username is already taken. Please select one of the alternate options below."
+        ],
         suggestions,
         lockOverlay: true,
         onAcceptSuggestion: (selectedUsername) => {
@@ -996,14 +1098,21 @@ window.initSignupForm = function () {
           username.focus();
         },
         onClose: () => {
-          username.value = "";
+          if (!username.value || suggestions.indexOf(username.value) === -1) {
+            username.value = "";
+          }
           username.focus();
         }
       });
+      return;
     }
-  }
-  if (email) email.addEventListener('input', handleEmailInput);
-  if (username) username.addEventListener('input', handleUsernameInput);
+  }, 180);
+
+  email.addEventListener('input', checkDupes);
+  username.addEventListener('input', checkDupes);
+}
+
+
 
   // ---- 7.7: Firestore Duplicate Checks (blur for phone) ----
 
